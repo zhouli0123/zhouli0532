@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>矢量图标 · Lucide</title>
+  <style>
+    /* 本页所有自定义类名、自定义属性均以 zhouli_ 开头；与字体图标页共用"墨·纸"底色，点缀色换为靛青 */
+    :root {
+      --zhouli_ink: #1e2833;      /* 墨 */
+      --zhouli_indigo: #274966;   /* 墨蓝：链接与结构线 */
+      --zhouli_jade: #2e6e65;     /* 靛青：本页点缀色，用于线条 */
+      --zhouli_paper: #f2f1ec;    /* 纸白底 */
+      --zhouli_card: #fbfaf6;     /* 样张纸 */
+      --zhouli_line: #dcd8cc;     /* 发丝线 */
+      --zhouli_dim: #6b7680;      /* 次要文字 */
+      --zhouli_serif: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
+      --zhouli_kai: "KaiTi", "STKaiti", "Noto Serif SC", serif;
+      --zhouli_mono: "Cascadia Mono", Consolas, "Courier New", monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--zhouli_paper);
+      color: var(--zhouli_ink);
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      line-height: 1.7;
+    }
+    a { color: var(--zhouli_indigo); }
+    a:focus-visible {
+      outline: 2px solid var(--zhouli_indigo);
+      outline-offset: 2px;
+    }
+
+    .zhouli_back {
+      display: inline-block;
+      margin: 22px 0 0 30px;
+      font-size: 14px;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .zhouli_back:hover { border-bottom-color: var(--zhouli_indigo); }
+
+    .zhouli_page {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px 30px 60px;
+    }
+
+    /* 英雄区：左题右样张 */
+    .zhouli_hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 48px;
+      align-items: center;
+      padding: 36px 0 48px;
+    }
+    .zhouli_h1 {
+      margin: 0 0 14px;
+      font-family: var(--zhouli_serif);
+      font-weight: 700;
+      font-size: clamp(44px, 7vw, 72px);
+      letter-spacing: 0.08em;
+      line-height: 1.15;
+    }
+    .zhouli_lede {
+      margin: 0;
+      font-size: 16px;
+      color: #46525e;
+      max-width: 34em;
+    }
+    .zhouli_lede strong { color: var(--zhouli_jade); font-weight: 600; }
+
+    /* 样张框：一块"图纸"，上方一道靛青题签 */
+    .zhouli_specimen {
+      margin: 0;
+      background: var(--zhouli_card);
+      border: 1px solid var(--zhouli_line);
+      border-top: 3px solid var(--zhouli_jade);
+      padding: 30px 28px 20px;
+    }
+    .zhouli_specimen-glyph {
+      display: block;
+      text-align: center;
+      color: var(--zhouli_jade);
+    }
+    .zhouli_hero-icon {
+      width: 128px;
+      height: 128px;
+    }
+    /* 唯一的开场动效：线条被画出来。尊重系统的减少动效设置 */
+    .zhouli_hero-icon path {
+      stroke-dasharray: 160;
+      stroke-dashoffset: 160;
+      animation: zhouli_draw 1.4s ease-out 0.25s forwards;
+    }
+    @keyframes zhouli_draw {
+      to { stroke-dashoffset: 0; }
+    }
+    .zhouli_meta {
+      margin: 18px 0 0;
+      border-top: 1px solid var(--zhouli_line);
+    }
+    .zhouli_meta > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 7px 0;
+      border-bottom: 1px dashed var(--zhouli_line);
+    }
+    .zhouli_meta > div:last-child { border-bottom: none; }
+    .zhouli_meta dt {
+      font-family: var(--zhouli_kai);
+      font-size: 14px;
+      color: var(--zhouli_dim);
+      white-space: nowrap;
+    }
+    .zhouli_meta dd {
+      margin: 0;
+      font-family: var(--zhouli_mono);
+      font-size: 12.5px;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+    .zhouli_jade-code { color: var(--zhouli_jade); font-size: 15px; }
+
+    /* 章节 */
+    .zhouli_section { margin-top: 44px; }
+    .zhouli_h2 {
+      margin: 0 0 18px;
+      font-family: var(--zhouli_serif);
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border-left: 3px solid var(--zhouli_jade);
+      padding-left: 12px;
+    }
+    .zhouli_h2 code {
+      font-family: var(--zhouli_mono);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--zhouli_jade);
+      background: var(--zhouli_card);
+      border: 1px solid var(--zhouli_line);
+      border-radius: 2px;
+      padding: 2px 7px;
+      margin-left: 10px;
+      vertical-align: 3px;
+    }
+
+    /* 线宽演示条：同一个心形，四种线宽 */
+    .zhouli_scale {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 34px;
+      background: var(--zhouli_card);
+      border: 1px solid var(--zhouli_line);
+      padding: 24px 28px 16px;
+    }
+    .zhouli_scale-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--zhouli_ink);
+    }
+    .zhouli_scale-item svg { width: 48px; height: 48px; }
+    .zhouli_w1 svg { stroke-width: 1; }
+    .zhouli_w15 svg { stroke-width: 1.5; }
+    .zhouli_w2 svg { stroke-width: 2; }
+    .zhouli_w3 svg { stroke-width: 3; }
+    .zhouli_scale-item span {
+      font-family: var(--zhouli_mono);
+      font-size: 11.5px;
+      color: var(--zhouli_dim);
+    }
+
+    /* 颜色演示条：SVG 用 currentColor，颜色随文字 */
+    .zhouli_tint {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 34px;
+      background: var(--zhouli_card);
+      border: 1px solid var(--zhouli_line);
+      padding: 24px 28px 16px;
+    }
+    .zhouli_tint-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .zhouli_tint-item svg { width: 48px; height: 48px; }
+    .zhouli_c-ink { color: var(--zhouli_ink); }
+    .zhouli_c-jade { color: var(--zhouli_jade); }
+    .zhouli_c-seal { color: #b5443a; }
+    .zhouli_c-dim { color: var(--zhouli_dim); }
+    .zhouli_tint-item span {
+      font-family: var(--zhouli_mono);
+      font-size: 11.5px;
+      color: var(--zhouli_dim);
+    }
+
+    /* 图盘：细线格子，只标名称（矢量图标没有字符编码） */
+    .zhouli_grid {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: 10px;
+    }
+    .zhouli_cell {
+      background: var(--zhouli_card);
+      border: 1px solid var(--zhouli_line);
+      border-radius: 2px;
+      padding: 18px 8px 14px;
+      text-align: center;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+    .zhouli_cell:hover {
+      background: #ffffff;
+      border-color: var(--zhouli_jade);
+    }
+    .zhouli_cell svg {
+      width: 26px;
+      height: 26px;
+      color: var(--zhouli_ink);
+    }
+    .zhouli_cell-name {
+      display: block;
+      margin-top: 12px;
+      font-family: var(--zhouli_mono);
+      font-size: 11.5px;
+      color: #46525e;
+      overflow-wrap: anywhere;
+    }
+
+    .zhouli_footer {
+      margin-top: 52px;
+      padding-top: 16px;
+      border-top: 1px solid var(--zhouli_line);
+      font-family: var(--zhouli_kai);
+      font-size: 13.5px;
+      color: var(--zhouli_dim);
+    }
+
+    @media (max-width: 720px) {
+      .zhouli_hero { grid-template-columns: 1fr; gap: 30px; padding-top: 10px; }
+      .zhouli_specimen { max-width: 420px; }
+      .zhouli_page { padding: 12px 18px 48px; }
+      .zhouli_back { margin-left: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .zhouli_hero-icon path {
+        animation: none;
+        stroke-dashoffset: 0;
+      }
+      * { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="zhouli_back" href="index.html">返回首页</a>
+
+  <main class="zhouli_page">
+    <header class="zhouli_hero">
+      <div>
+        <h1 class="zhouli_h1">矢量图标</h1>
+        <p class="zhouli_lede">每个图标都是一段线条，<strong>是被画出来的，不是打出来的</strong>。下面是 Lucide 的线稿盘。</p>
+      </div>
+      <figure class="zhouli_specimen">
+        <span class="zhouli_specimen-glyph"><i class="zhouli_hero-icon" data-lucide="heart"></i></span>
+        <dl class="zhouli_meta">
+          <div>
+            <dt>画布视窗</dt>
+            <dd class="zhouli_jade-code">0 0 24 24</dd>
+          </div>
+          <div>
+            <dt>默认线宽</dt>
+            <dd>2 px</dd>
+          </div>
+          <div>
+            <dt>线帽</dt>
+            <dd>round（圆头）</dd>
+          </div>
+          <div>
+            <dt>写法</dt>
+            <dd>&lt;i data-lucide="heart"&gt;</dd>
+          </div>
+        </dl>
+      </figure>
+    </header>
+
+    <section class="zhouli_section">
+      <h2 class="zhouli_h2">同一线稿，不同线宽</h2>
+      <div class="zhouli_scale">
+        <div class="zhouli_scale-item zhouli_w1"><i data-lucide="heart"></i><span>1</span></div>
+        <div class="zhouli_scale-item zhouli_w15"><i data-lucide="heart"></i><span>1.5</span></div>
+        <div class="zhouli_scale-item zhouli_w2"><i data-lucide="heart"></i><span>2</span></div>
+        <div class="zhouli_scale-item zhouli_w3"><i data-lucide="heart"></i><span>3</span></div>
+      </div>
+    </section>
+
+    <section class="zhouli_section">
+      <h2 class="zhouli_h2">线条颜色随文字而变</h2>
+      <div class="zhouli_tint">
+        <div class="zhouli_tint-item zhouli_c-ink"><i data-lucide="heart"></i><span>currentColor</span></div>
+        <div class="zhouli_tint-item zhouli_c-jade"><i data-lucide="heart"></i><span>currentColor</span></div>
+        <div class="zhouli_tint-item zhouli_c-seal"><i data-lucide="heart"></i><span>currentColor</span></div>
+        <div class="zhouli_tint-item zhouli_c-dim"><i data-lucide="heart"></i><span>currentColor</span></div>
+      </div>
+    </section>
+
+    <section class="zhouli_section">
+      <h2 class="zhouli_h2">线稿盘<code>lucide</code></h2>
+      <ul class="zhouli_grid">
+        <li class="zhouli_cell"><i data-lucide="heart"></i><span class="zhouli_cell-name">heart</span></li>
+        <li class="zhouli_cell"><i data-lucide="star"></i><span class="zhouli_cell-name">star</span></li>
+        <li class="zhouli_cell"><i data-lucide="settings"></i><span class="zhouli_cell-name">settings</span></li>
+        <li class="zhouli_cell"><i data-lucide="user"></i><span class="zhouli_cell-name">user</span></li>
+        <li class="zhouli_cell"><i data-lucide="search"></i><span class="zhouli_cell-name">search</span></li>
+        <li class="zhouli_cell"><i data-lucide="bell"></i><span class="zhouli_cell-name">bell</span></li>
+        <li class="zhouli_cell"><i data-lucide="calendar"></i><span class="zhouli_cell-name">calendar</span></li>
+        <li class="zhouli_cell"><i data-lucide="camera"></i><span class="zhouli_cell-name">camera</span></li>
+        <li class="zhouli_cell"><i data-lucide="clock"></i><span class="zhouli_cell-name">clock</span></li>
+        <li class="zhouli_cell"><i data-lucide="cloud"></i><span class="zhouli_cell-name">cloud</span></li>
+        <li class="zhouli_cell"><i data-lucide="download"></i><span class="zhouli_cell-name">download</span></li>
+        <li class="zhouli_cell"><i data-lucide="mail"></i><span class="zhouli_cell-name">mail</span></li>
+        <li class="zhouli_cell"><i data-lucide="map-pin"></i><span class="zhouli_cell-name">map-pin</span></li>
+        <li class="zhouli_cell"><i data-lucide="moon"></i><span class="zhouli_cell-name">moon</span></li>
+        <li class="zhouli_cell"><i data-lucide="music"></i><span class="zhouli_cell-name">music</span></li>
+        <li class="zhouli_cell"><i data-lucide="phone"></i><span class="zhouli_cell-name">phone</span></li>
+        <li class="zhouli_cell"><i data-lucide="play"></i><span class="zhouli_cell-name">play</span></li>
+        <li class="zhouli_cell"><i data-lucide="sun"></i><span class="zhouli_cell-name">sun</span></li>
+        <li class="zhouli_cell"><i data-lucide="trash-2"></i><span class="zhouli_cell-name">trash-2</span></li>
+        <li class="zhouli_cell"><i data-lucide="wifi"></i><span class="zhouli_cell-name">wifi</span></li>
+      </ul>
+    </section>
+
+    <footer class="zhouli_footer">脚本存于本目录的 cdn 文件夹；页面加载时，data-lucide 占位元素被写成内联 SVG，可任意缩放而不失真。</footer>
+  </main>
+
+  <!-- 本地 CDN：Lucide UMD 构建 -->
+  <script src="cdn/lucide.min.js"></script>
+  <script>
+    // 将所有 data-lucide 占位元素替换为内联 SVG（未声明任何自定义变量，遵守 zhouli_ 前缀规则）
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>

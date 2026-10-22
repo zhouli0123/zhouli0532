@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>底部导航栏 · 字体图标</title>
+  <!-- 字体图标方式：图标来自 font 目录的 iconfont.css（字符渲染） -->
+  <link rel="stylesheet" href="font/iconfont.css">
+  <style>
+    /* 本页所有自定义类名、自定义属性均以 zhouli_ 开头；沿用系列"墨·纸"风格 */
+    :root {
+      --zhouli_ink: #1e2833;
+      --zhouli_indigo: #274966;
+      --zhouli_seal: #b5443a;
+      --zhouli_paper: #f2f1ec;
+      --zhouli_card: #fbfaf6;
+      --zhouli_line: #dcd8cc;
+      --zhouli_dim: #6b7680;
+      --zhouli_serif: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
+      --zhouli_kai: "KaiTi", "STKaiti", "Noto Serif SC", serif;
+      --zhouli_mono: "Cascadia Mono", Consolas, "Courier New", monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--zhouli_paper);
+      color: var(--zhouli_ink);
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      line-height: 1.7;
+    }
+    a { color: var(--zhouli_indigo); }
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--zhouli_indigo);
+      outline-offset: 2px;
+    }
+
+    /* 手机列：窄屏全宽，宽屏居中成一条"手机" */
+    .zhouli_wrap {
+      max-width: 480px;
+      min-height: 100dvh;
+      margin: 0 auto;
+      padding: 0 20px 120px;
+      border-left: 1px solid var(--zhouli_line);
+      border-right: 1px solid var(--zhouli_line);
+      background: var(--zhouli_paper);
+    }
+    .zhouli_back {
+      display: inline-block;
+      margin: 20px 0 0;
+      font-size: 14px;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .zhouli_back:hover { border-bottom-color: var(--zhouli_indigo); }
+
+    .zhouli_head { padding: 18px 0 26px; }
+    .zhouli_h1 {
+      margin: 0 0 10px;
+      font-family: var(--zhouli_serif);
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .zhouli_lede {
+      margin: 0;
+      font-size: 14.5px;
+      color: #46525e;
+    }
+    .zhouli_lede code {
+      font-family: var(--zhouli_mono);
+      font-size: 12.5px;
+      color: var(--zhouli_indigo);
+      background: var(--zhouli_card);
+      border: 1px solid var(--zhouli_line);
+      border-radius: 2px;
+      padding: 1px 5px;
+    }
+
+    .zhouli_list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .zhouli_list li {
+      padding: 13px 2px;
+      border-bottom: 1px dashed var(--zhouli_line);
+      font-size: 14px;
+    }
+    .zhouli_list li:last-child { border-bottom: none; }
+    .zhouli_term {
+      font-family: var(--zhouli_kai);
+      color: var(--zhouli_dim);
+      margin-right: 10px;
+    }
+
+    /* 底部导航：固定定位 + 项目均分自适应宽度 */
+    .zhouli_tabbar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      background: var(--zhouli_card);
+      border-top: 1px solid var(--zhouli_line);
+      padding: 4px 0 calc(4px + env(safe-area-inset-bottom));
+      z-index: 10;
+    }
+    .zhouli_tab {
+      flex: 1; /* 自适应宽度：四项均分 */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 8px 0 6px;
+      background: none;
+      border: none;
+      border-radius: 0;
+      font-family: inherit;
+      font-size: 11px;
+      color: var(--zhouli_dim);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .zhouli_tab + .zhouli_tab { border-left: 1px solid var(--zhouli_line); }
+    .zhouli_tab:hover { color: var(--zhouli_ink); }
+    .zhouli_is-active { color: var(--zhouli_indigo); }
+
+    .zhouli_tab-icon {
+      position: relative;
+      display: block;
+      line-height: 1;
+    }
+    .zhouli_tab-glyph {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    /* 数字徽章：图标右上角，超过 99 显示 99+ */
+    .zhouli_badge {
+      position: absolute;
+      top: -6px;
+      left: 16px;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 8px;
+      background: var(--zhouli_seal);
+      color: #fff;
+      font-family: var(--zhouli_mono);
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 16px;
+      text-align: center;
+    }
+    /* 红点：只提示"有新内容" */
+    .zhouli_dot {
+      position: absolute;
+      top: -2px;
+      left: 20px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--zhouli_seal);
+    }
+
+    @media (max-width: 519px) {
+      .zhouli_wrap { border-left: none; border-right: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="zhouli_wrap">
+    <a class="zhouli_back" href="index.html">返回首页</a>
+
+    <header class="zhouli_head">
+      <h1 class="zhouli_h1">底部导航栏</h1>
+      <p class="zhouli_lede">图标以<code>iconfont</code>字体字符渲染，来自 font 目录的 iconfont.css；四个项目均分一行，钉在视口底部。</p>
+    </header>
+
+    <ul class="zhouli_list">
+      <li><span class="zhouli_term">数字徽章</span>图标右上角显示待处理数量，超过 99 时显示 99+。</li>
+      <li><span class="zhouli_term">红点</span>只提示"有新内容"，不显示具体数量。</li>
+      <li><span class="zhouli_term">自适应宽度</span>四个项目各占 <code style="font-family:var(--zhouli_mono)">flex: 1</code> 均分一行，屏宽变化自动跟随。</li>
+      <li><span class="zhouli_term">固定定位</span>导航用 <code style="font-family:var(--zhouli_mono)">position: fixed</code> 钉在底部，滚动页面时不随内容移动。</li>
+      <li><span class="zhouli_term">点击切换</span>点下面任意一项，可以切换当前高亮。</li>
+    </ul>
+  </div>
+
+  <nav class="zhouli_tabbar" aria-label="底部导航">
+    <button class="zhouli_tab zhouli_is-active" type="button" aria-pressed="true">
+      <span class="zhouli_tab-icon">
+        <i class="iconfont icon-browser zhouli_tab-glyph"></i>
+        <span class="zhouli_dot"></span>
+      </span>
+      浏览
+    </button>
+    <button class="zhouli_tab" type="button" aria-pressed="false">
+      <span class="zhouli_tab-icon">
+        <i class="iconfont icon-filter zhouli_tab-glyph"></i>
+      </span>
+      筛选
+    </button>
+    <button class="zhouli_tab" type="button" aria-pressed="false">
+      <span class="zhouli_tab-icon">
+        <i class="iconfont icon-nav zhouli_tab-glyph"></i>
+        <span class="zhouli_badge">6</span>
+      </span>
+      发现
+    </button>
+    <button class="zhouli_tab" type="button" aria-pressed="false">
+      <span class="zhouli_tab-icon">
+        <i class="iconfont icon-phone zhouli_tab-glyph"></i>
+        <span class="zhouli_badge">99+</span>
+      </span>
+      电话
+    </button>
+  </nav>
+
+  <script>
+    // 点击切换当前高亮（变量均以 zhouli_ 开头）
+    var zhouliTabs = document.querySelectorAll('.zhouli_tab');
+    zhouliTabs.forEach(function (zhouliTab) {
+      zhouliTab.addEventListener('click', function () {
+        zhouliTabs.forEach(function (zhouliOther) {
+          zhouliOther.classList.remove('zhouli_is-active');
+          zhouliOther.setAttribute('aria-pressed', 'false');
+        });
+        zhouliTab.classList.add('zhouli_is-active');
+        zhouliTab.setAttribute('aria-pressed', 'true');
+      });
+    });
+  </script>
+</body>
+</html>

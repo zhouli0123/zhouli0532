@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>字体图标 · Font Awesome</title>
+  <!-- 字体图标方式：图标以字体字符渲染（CSS + woff2/ttf 字体文件，本地 cdn 目录） -->
+  <link rel="stylesheet" href="cdn/css/all.min.css">
+  <style>
+    /* 本页所有自定义类名、自定义属性均以 zhouli_ 开头 */
+    :root {
+      --zhouli_ink: #1e2833;      /* 墨 */
+      --zhouli_indigo: #274966;   /* 墨蓝：链接与结构线 */
+      --zhouli_seal: #b5443a;     /* 朱砂：本页点缀色，用于字符编码 */
+      --zhouli_paper: #f2f1ec;    /* 纸白底 */
+      --zhouli_card: #fbfaf6;     /* 样张纸 */
+      --zhouli_line: #dcd8cc;     /* 发丝线 */
+      --zhouli_dim: #6b7680;      /* 次要文字 */
+      --zhouli_serif: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
+      --zhouli_kai: "KaiTi", "STKaiti", "Noto Serif SC", serif;
+      --zhouli_mono: "Cascadia Mono", Consolas, "Courier New", monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--zhouli_paper);
+      color: var(--zhouli_ink);
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      line-height: 1.7;
+    }
+    a { color: var(--zhouli_indigo); }
+    a:focus-visible {
+      outline: 2px solid var(--zhouli_indigo);
+      outline-offset: 2px;
+    }
+
+    .zhouli_back {
+      display: inline-block;
+      margin: 22px 0 0 30px;
+      font-size: 14px;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .zhouli_back:hover { border-bottom-color: var(--zhouli_indigo); }
+
+    .zhouli_page {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px 30px 60px;
+    }
+
+    /* 英雄区：左题右样张 */
+    .zhouli_hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 48px;
+      align-items: center;
+      padding: 36px 0 48px;
+    }
+    .zhouli_h1 {
+      margin: 0 0 14px;
+      font-family: var(--zhouli_serif);
+      font-weight: 700;
+      font-size: clamp(44px, 7vw, 72px);
+      letter-spacing: 0.08em;
+      line-height: 1.15;
+    }
+    .zhouli_lede {
+      margin: 0;
+      font-size: 16px;
+      color: #46525e;
+      max-width: 34em;
+    }
+    .zhouli_lede strong { color: var(--zhouli_seal); font-weight: 600; }
+
+    /* 样张框：一块"字帖"，上方一道墨蓝题签 */
+    .zhouli_specimen {
+      margin: 0;
+      background: var(--zhouli_card);
+      border: 1px solid var(--zhouli_line);
+      border-top: 3px solid var(--zhouli_indigo);
+      padding: 26px 28px 20px;
+    }
+    .zhouli_specimen-glyph {
+      display: block;
+      text-align: center;
+      font-size: 108px;
+      line-height: 1.15;
+    }
+    .zhouli_meta {
+      margin: 18px 0 0;
+      border-top: 1px solid var(--zhouli_line);
+    }
+    .zhouli_meta > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 7px 0;
+      border-bottom: 1px dashed var(--zhouli_line);
+    }
+    .zhouli_meta > div:last-child { border-bottom: none; }
+    .zhouli_meta dt {
+      font-family: var(--zhouli_kai);
+      font-size: 14px;
+      color: var(--zhouli_dim);
+      white-space: nowrap;
+    }
+    .zhouli_meta dd {
+      margin: 0;
+      font-family: var(--zhouli_mono);
+      font-size: 12.5px;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+    .zhouli_seal-code { color: var(--zhouli_seal); font-size: 15px; }
+
+    /* 章节 */
+    .zhouli_section { margin-top: 44px; }
+    .zhouli_h2 {
+      margin: 0 0 18px;
+      font-family: var(--zhouli_serif);
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border-left: 3px solid var(--zhouli_indigo);
+      padding-left: 12px;
+    }
+    .zhouli_h2 code {
+      font-family: var(--zhouli_mono);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--zhouli_indigo);
+      background: var(--zhouli_card);
+      border: 1px solid var(--zhouli_line);
+      border-radius: 2px;
+      padding: 2px 7px;
+      margin-left: 10px;
+      vertical-align: 3px;
+    }
+
+    /* 字号演示条 */
+    .zhouli_scale {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 34px;
+      background: var(--zhouli_card);
+      border: 1px solid var(--zhouli_line);
+      padding: 24px 28px 16px;
+    }
+    .zhouli_scale-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .zhouli_scale-item i { line-height: 1; }
+    .zhouli_s16 { font-size: 16px; }
+    .zhouli_s28 { font-size: 28px; }
+    .zhouli_s44 { font-size: 44px; }
+    .zhouli_s64 { font-size: 64px; }
+    .zhouli_scale-item span {
+      font-family: var(--zhouli_mono);
+      font-size: 11.5px;
+      color: var(--zhouli_dim);
+    }
+
+    /* 字盘：细线格子，承载名称与编码 */
+    .zhouli_grid {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: 10px;
+    }
+    .zhouli_cell {
+      background: var(--zhouli_card);
+      border: 1px solid var(--zhouli_line);
+      border-radius: 2px;
+      padding: 18px 8px 12px;
+      text-align: center;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+    .zhouli_cell:hover {
+      background: #ffffff;
+      border-color: var(--zhouli_indigo);
+    }
+    .zhouli_cell i {
+      font-size: 26px;
+      line-height: 1;
+    }
+    .zhouli_cell-name {
+      display: block;
+      margin-top: 12px;
+      font-family: var(--zhouli_mono);
+      font-size: 11.5px;
+      color: #46525e;
+      overflow-wrap: anywhere;
+    }
+    .zhouli_cell-code {
+      display: block;
+      margin-top: 2px;
+      font-family: var(--zhouli_mono);
+      font-size: 10.5px;
+      color: #a3aaa4;
+      transition: color 0.15s;
+    }
+    .zhouli_cell:hover .zhouli_cell-code { color: var(--zhouli_seal); }
+
+    .zhouli_footer {
+      margin-top: 52px;
+      padding-top: 16px;
+      border-top: 1px solid var(--zhouli_line);
+      font-family: var(--zhouli_kai);
+      font-size: 13.5px;
+      color: var(--zhouli_dim);
+    }
+
+    @media (max-width: 720px) {
+      .zhouli_hero { grid-template-columns: 1fr; gap: 30px; padding-top: 10px; }
+      .zhouli_specimen { max-width: 420px; }
+      .zhouli_page { padding: 12px 18px 48px; }
+      .zhouli_back { margin-left: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="zhouli_back" href="index.html">返回首页</a>
+
+  <main class="zhouli_page">
+    <header class="zhouli_hero">
+      <div>
+        <h1 class="zhouli_h1">字体图标</h1>
+        <p class="zhouli_lede">每个图标都是字体里的一个字符，<strong>像打字一样把它打出来</strong>。下面是 Font Awesome Free 的字盘。</p>
+      </div>
+      <figure class="zhouli_specimen">
+        <span class="zhouli_specimen-glyph"><i class="fa-solid fa-heart"></i></span>
+        <dl class="zhouli_meta">
+          <div>
+            <dt>字符编码</dt>
+            <dd class="zhouli_seal-code">f004</dd>
+          </div>
+          <div>
+            <dt>字体族</dt>
+            <dd>Font Awesome Free</dd>
+          </div>
+          <div>
+            <dt>字体文件</dt>
+            <dd>fa-solid-900.woff2</dd>
+          </div>
+          <div>
+            <dt>写法</dt>
+            <dd>&lt;i class="fa-solid fa-heart"&gt;</dd>
+          </div>
+        </dl>
+      </figure>
+    </header>
+
+    <section class="zhouli_section">
+      <h2 class="zhouli_h2">一个字形，任意字号</h2>
+      <div class="zhouli_scale">
+        <div class="zhouli_scale-item"><i class="fa-solid fa-heart zhouli_s16"></i><span>16px</span></div>
+        <div class="zhouli_scale-item"><i class="fa-solid fa-heart zhouli_s28"></i><span>28px</span></div>
+        <div class="zhouli_scale-item"><i class="fa-solid fa-heart zhouli_s44"></i><span>44px</span></div>
+        <div class="zhouli_scale-item"><i class="fa-solid fa-heart zhouli_s64"></i><span>64px</span></div>
+      </div>
+    </section>
+
+    <section class="zhouli_section">
+      <h2 class="zhouli_h2">实体样式<code>fa-solid</code></h2>
+      <ul class="zhouli_grid">
+        <li class="zhouli_cell"><i class="fa-solid fa-house"></i><span class="zhouli_cell-name">house</span><span class="zhouli_cell-code">f015</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-heart"></i><span class="zhouli_cell-name">heart</span><span class="zhouli_cell-code">f004</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-star"></i><span class="zhouli_cell-name">star</span><span class="zhouli_cell-code">f005</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-gear"></i><span class="zhouli_cell-name">gear</span><span class="zhouli_cell-code">f013</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-user"></i><span class="zhouli_cell-name">user</span><span class="zhouli_cell-code">f007</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-magnifying-glass"></i><span class="zhouli_cell-name">magnifying-glass</span><span class="zhouli_cell-code">f002</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-bell"></i><span class="zhouli_cell-name">bell</span><span class="zhouli_cell-code">f0f3</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-calendar"></i><span class="zhouli_cell-name">calendar</span><span class="zhouli_cell-code">f133</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-camera"></i><span class="zhouli_cell-name">camera</span><span class="zhouli_cell-code">f030</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-clock"></i><span class="zhouli_cell-name">clock</span><span class="zhouli_cell-code">f017</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-cloud"></i><span class="zhouli_cell-name">cloud</span><span class="zhouli_cell-code">f0c2</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-download"></i><span class="zhouli_cell-name">download</span><span class="zhouli_cell-code">f019</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-envelope"></i><span class="zhouli_cell-name">envelope</span><span class="zhouli_cell-code">f0e0</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-location-dot"></i><span class="zhouli_cell-name">location-dot</span><span class="zhouli_cell-code">f3c5</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-moon"></i><span class="zhouli_cell-name">moon</span><span class="zhouli_cell-code">f186</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-music"></i><span class="zhouli_cell-name">music</span><span class="zhouli_cell-code">f001</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-phone"></i><span class="zhouli_cell-name">phone</span><span class="zhouli_cell-code">f095</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-play"></i><span class="zhouli_cell-name">play</span><span class="zhouli_cell-code">f04b</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-trash"></i><span class="zhouli_cell-name">trash</span><span class="zhouli_cell-code">f1f8</span></li>
+        <li class="zhouli_cell"><i class="fa-solid fa-wifi"></i><span class="zhouli_cell-name">wifi</span><span class="zhouli_cell-code">f1eb</span></li>
+      </ul>
+    </section>
+
+    <section class="zhouli_section">
+      <h2 class="zhouli_h2">常规样式<code>fa-regular</code></h2>
+      <ul class="zhouli_grid">
+        <li class="zhouli_cell"><i class="fa-regular fa-heart"></i><span class="zhouli_cell-name">heart</span><span class="zhouli_cell-code">f004</span></li>
+        <li class="zhouli_cell"><i class="fa-regular fa-bell"></i><span class="zhouli_cell-name">bell</span><span class="zhouli_cell-code">f0f3</span></li>
+        <li class="zhouli_cell"><i class="fa-regular fa-envelope"></i><span class="zhouli_cell-name">envelope</span><span class="zhouli_cell-code">f0e0</span></li>
+        <li class="zhouli_cell"><i class="fa-regular fa-clock"></i><span class="zhouli_cell-name">clock</span><span class="zhouli_cell-code">f017</span></li>
+        <li class="zhouli_cell"><i class="fa-regular fa-calendar"></i><span class="zhouli_cell-name">calendar</span><span class="zhouli_cell-code">f133</span></li>
+        <li class="zhouli_cell"><i class="fa-regular fa-star"></i><span class="zhouli_cell-name">star</span><span class="zhouli_cell-code">f005</span></li>
+      </ul>
+    </section>
+
+    <section class="zhouli_section">
+      <h2 class="zhouli_h2">品牌样式<code>fa-brands</code></h2>
+      <ul class="zhouli_grid">
+        <li class="zhouli_cell"><i class="fa-brands fa-weixin"></i><span class="zhouli_cell-name">weixin</span><span class="zhouli_cell-code">f1d7</span></li>
+        <li class="zhouli_cell"><i class="fa-brands fa-qq"></i><span class="zhouli_cell-name">qq</span><span class="zhouli_cell-code">f1d6</span></li>
+        <li class="zhouli_cell"><i class="fa-brands fa-github"></i><span class="zhouli_cell-name">github</span><span class="zhouli_cell-code">f09b</span></li>
+        <li class="zhouli_cell"><i class="fa-brands fa-html5"></i><span class="zhouli_cell-name">html5</span><span class="zhouli_cell-code">f13b</span></li>
+        <li class="zhouli_cell"><i class="fa-brands fa-css3-alt"></i><span class="zhouli_cell-name">css3-alt</span><span class="zhouli_cell-code">f38b</span></li>
+        <li class="zhouli_cell"><i class="fa-brands fa-js"></i><span class="zhouli_cell-name">js</span><span class="zhouli_cell-code">f3b9</span></li>
+      </ul>
+    </section>
+
+    <footer class="zhouli_footer">图标字体与样式表存于本目录的 cdn 文件夹，无需联网即可显示。</footer>
+  </main>
+</body>
+</html>

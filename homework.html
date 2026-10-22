@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>H5布局作业·答案页</title>
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="card.css">
+</head>
+
+<body>
+    <a id="top"></a>
+
+    <header>
+        <h1>0532周丽作业答案页</h1>
+    </header>
+
+    <div class="wrap">
+        <main>
+
+            <h2>第一部分答案</h2>
+            <div class="ans">
+                <p>① 图片放大跑出卡片 → <code>.box li</code> 加 <code>overflow:hidden;</code></p>
+                <p>② 移出没动画 → <code>transition</code> 写到 <code>.box img</code> 默认态</p>
+                <p>③ 排版错乱 → <code>.box li</code> 加 <code>position:relative;</code>，<code>.box</code> 加
+                    <code>flex-wrap:wrap;</code></p>
+            </div>
+
+            <h2>第二部分答案 + 6张图文卡片</h2>
+            <div class="ans">
+                <p>2.1语义标签填空：header 、 nav 、 main 、 footer</p>
+                <p>防溢出li添加属性：overflow:hidden｜子绝父相li添加属性：position:relative</p>
+                <p>放大需要写哪两个选择器：.box img + .box li:hover img</p>
+                <p>transition 写默认选择器（移入移出都有动画）</p>
+                <p>奇数卡片使用什么伪类选择器：:nth-child(odd):hover</p>
+                <p>flex 两栏：display:flex ＋ gap:8px</p>
+            </div>
+
+            <ul class="box">
+                <li>
+                    <img src="./img/1.jpg" alt="">
+                    <div class="txt"><b>卡片1</b><br>悬浮图片放大，文字展开</div>
+                </li>
+                <li>
+                    <img src="./img/2.jpg" alt="">
+                    <div class="txt"><b>卡片2</b><br>偶数卡片底部展开</div>
+                </li>
+                <li>
+                    <img src="./img/3.jpg" alt="">
+                    <div class="txt"><b>卡片3</b><br>奇数卡片铺满</div>
+                </li>
+                <li>
+                    <img src="./img/4.jpg" alt="">
+                    <div class="txt"><b>卡片4</b><br>overflow 裁切放大图</div>
+                </li>
+                <li>
+                    <img src="./img/5.jpg" alt="">
+                    <div class="txt"><b>卡片5</b><br>transition 写默认态</div>
+                </li>
+                <li>
+                    <img src="./img/6.jpg" alt="">
+                    <div class="txt"><b>卡片6</b><br>无 float 布局</div>
+                </li>
+            </ul>
+
+            <h2>第三部分答案</h2>
+            <div class="pic-box">
+                <img src="./img/zuoye.jpg" alt="子绝父相示意图">
+            </div>
+
+        
+
+            <h2>第四部分答案（纯 CSS 回顶）</h2>
+            <pre>
+.to-top{
+  position: fixed;
+  left: 20px; bottom: 20px;
+  opacity: .5;
+  z-index: 999;
+  transition: all .3s;
+}
+.to-top:hover{
+  opacity: 1;
+  transform: scale(1.1);
+}
+            </pre>
+
+        </main>
+    </div>
+
+    <footer>footer 底部区域</footer>
+    <a class="to-top" href="#top">↑</a>
+
+</body>
+
+</html>
