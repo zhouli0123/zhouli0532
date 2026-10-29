@@ -30,9 +30,33 @@
 - **使用的模型**：GLM-5.3-Flash
 - **提示词内容**：
 
-  > 根据font目录中的iconfont图标完成移动端的固定的自适应宽度的下导航，导航项目包括4个，完成html网页的设计，网页名称iconfont-3.html和iconfont-4.html分别使用字体图标和svg，包括右上角的数字徽章和红点。
+  > 第一次gitee自动提交步骤：`https://gitee.com/zh-ou-li-li/zhouli532.git`
 
 - **时间**：2026-10-22（Asia/Shanghai）
 - **使用的模型**：GLM-5.3-Flash
 - **提示词内容**：
-  > 第一次gitee自动提交步骤：`https://gitee.com/zh-ou-li-li/zhouli532.git`
+
+  > 创建skill:提交项目：使用git commit并push当前项目到`https://gitee.com/zh-ou-li-li/zhouli532.git`
+
+- **时间**：2026-10-26（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+
+  > 根据图片要求，严格按照图片要求完成任务（附两张图片，当前打开 starter-level1.html）
+
+- **时间**：2026-10-26（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+
+  > 目标效果为：`https://spontaneous-valkyrie-4e4229.netlify.app/target`
+
+- **时间**：2026-10-29（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+
+  > 创建技能skill：提交到github，将本项目提交commit并push到`https://github.com/zhouli0123/zhouli0532.git`，使用已设置公钥。
+
+- **时间**：2026-10-29（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+  > 提交到github
