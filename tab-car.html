@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<!-- 周丽 2026-11-02 GLM-5.3-Flash 功能：汽车资讯选项卡 —— 按要求截图一比一还原：导购/3-9万/9-17万/17-42万/SUV 五个选项卡，红色头条 + 新闻列表 + 右侧日期，选中标签黑字白底 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Tab选项卡</title>
+<style>
+	* {
+		margin: 0;
+		padding: 0;
+	}
+	body {
+		font: 12px/1.5 Arial, "Microsoft YaHei", sans-serif;
+	}
+	ul {
+		list-style: none;
+	}
+	a {
+		text-decoration: none;
+	}
+	/* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_tab —— 选项卡整体容器，固定 400px 居中 */
+	#zhouli_tab {
+		width: 400px;
+		margin: 50px auto;
+	}
+
+	/* ---- 选项卡头部 ---- */
+	/* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_tab-nav —— 标签行，底边框供选中标签覆盖衔接 */
+	.zhouli_tab-nav {
+		height: 32px;
+		border-bottom: 1px solid #dcdcdc;
+		overflow: hidden;
+		padding-left: 1px;
+	}
+	/* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_tab-nav li —— 单个标签，渐变灰底加边框 */
+	.zhouli_tab-nav li {
+		float: left;
+		height: 31px;
+		line-height: 31px;
+		padding: 0 16px;
+		margin-right: 2px;
+		border: 1px solid #dcdcdc;
+		border-bottom: none;
+		background: linear-gradient(#ffffff, #f2f2f2);
+		color: #333;
+		font-size: 14px;
+		font-weight: bold;
+		cursor: pointer;
+		position: relative;
+	}
+	/* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_active —— 选中标签：白底加高 1px 盖住底边框 */
+	.zhouli_tab-nav li.zhouli_active {
+		height: 32px;      /* 多1px 盖住底部边框，与内容区连为一体 */
+		background: #fff;
+		color: #333;
+		border-color: #dcdcdc;
+	}
+
+	/* ---- 内容区 ---- */
+	/* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_tab-box —— 内容区外框，上移 1px 抵消选中标签的高出部分 */
+	.zhouli_tab-box {
+		border: 1px solid #dcdcdc;
+		border-top: none;
+		padding: 15px 10px 10px;
+		position: relative;
+		top: -1px;         /* 抵消 active 标签多出的1px */
+	}
+	/* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_tab-panel —— 单个面板，默认隐藏仅选中时显示 */
+	.zhouli_tab-panel {
+		display: none;
+	}
+	.zhouli_tab-panel.zhouli_active {
+		display: block;
+	}
+	/* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_title —— 红色大号头条标题 */
+	.zhouli_tab-panel .zhouli_title {
+		display: block;
+		text-align: center;
+		font-size: 16px;
+		font-weight: bold;
+		color: #c00;
+		margin-bottom: 10px;
+	}
+	.zhouli_tab-panel .zhouli_title:hover {
+		text-decoration: underline;
+	}
+	/* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_tab-panel ul li —— 新闻条目行，左侧圆点右侧日期 */
+	.zhouli_tab-panel ul li {
+		height: 26px;
+		line-height: 26px;
+		padding-left: 12px;
+		position: relative;
+		overflow: hidden;
+	}
+	.zhouli_tab-panel ul li::before {
+		content: "·";
+		position: absolute;
+		left: 2px;
+		top: 0;
+		font-weight: bold;
+	}
+	.zhouli_tab-panel ul li a {
+		color: #0044cc;
+		float: left;
+	}
+	.zhouli_tab-panel ul li a:hover {
+		text-decoration: underline;
+	}
+	.zhouli_tab-panel ul li span {
+		float: right;
+		color: #999;
+	}
+</style>
+</head>
+<body>
+
+<div id="zhouli_tab">
+	<!-- 选项卡头部：导购为默认选中 -->
+	<ul class="zhouli_tab-nav" id="zhouli_tabNav">
+		<li class="zhouli_active">导购</li>
+		<li>3-9万</li>
+		<li>9-17万</li>
+		<li>17-42万</li>
+		<li>SUV</li>
+	</ul>
+
+	<!-- 内容区：面板顺序与要求截图一一对应 -->
+	<div class="zhouli_tab-box" id="zhouli_tabBox">
+		<!-- 面板1：导购（截图1） -->
+		<div class="zhouli_tab-panel zhouli_active">
+			<a class="zhouli_title" href="javascript:;">B级品质满足A级需求 路盛E70亮点详解析</a>
+			<ul>
+				<li><a href="javascript:;">购车必看 凯迪拉克XTS领先型28T深度体验</a><span>12/20</span></li>
+				<li><a href="javascript:;">爸爸去哪？亲子出游适合车型和注意事项</a><span>12/20</span></li>
+				<li><a href="javascript:;">推荐，X1等城市四驱Style+经济省油的SUV</a><span>12/19</span></li>
+				<li><a href="javascript:;">全景天窗/保养便利 30万办齐四驱SUV推荐</a><span>12/19</span></li>
+				<li><a href="javascript:;">全民摇号时代?六款低价占号必备车型推荐</a><span>12/19</span></li>
+				<li><a href="javascript:;">最高暴降20万！奥迪Q5等年底特惠SUV盘点</a><span>12/18</span></li>
+			</ul>
+		</div>
+
+		<!-- 面板2：3-9万（截图2） -->
+		<div class="zhouli_tab-panel">
+			<a class="zhouli_title" href="javascript:;">最低仅4.6万元起 超低价SUV购买价值点评</a>
+			<ul>
+				<li><a href="javascript:;">全民摇号时代?六款低价占号必备车型推荐</a><span>12/19</span></li>
+				<li><a href="javascript:;">朗动/观致3等 2013年全新热门家用车盘点</a><span>12/11</span></li>
+				<li><a href="javascript:;">坚持低价高配路线！静态评测华泰路盛E70</a><span>12/09</span></li>
+				<li><a href="javascript:;">买车先看销量 10月份销量前十名轿车盘点</a><span>11/29</span></li>
+				<li><a href="javascript:;">抄底正当时 车展后清仓优惠老款车型推荐</a><span>11/28</span></li>
+				<li><a href="javascript:;">土豪气质 细致车展那些低价车上的&ldquo;神器&rdquo;</a><span>11/27</span></li>
+			</ul>
+		</div>
+
+		<!-- 面板3：9-17万（截图3） -->
+		<div class="zhouli_tab-panel">
+			<a class="zhouli_title" href="javascript:;">15万级降价车谁更值 预算/油耗/空间较量</a>
+			<ul>
+				<li><a href="javascript:;">爸爸去哪？亲子出游适合车型和注意事项</a><span>12/20</span></li>
+				<li><a href="javascript:;">最高暴降20万！奥迪Q5等年底特惠SUV盘点</a><span>12/18</span></li>
+				<li><a href="javascript:;">配侧气帘值得肯定！传祺GA3碰撞试验图解</a><span>12/18</span></li>
+				<li><a href="javascript:;">高尔夫7&ne;两厢版速腾 配置/动力差异解读</a><span>12/18</span></li>
+				<li><a href="javascript:;">花小钱也能养SUV 翼博等入门SUV使用手册</a><span>12/17</span></li>
+				<li><a href="javascript:;">最高优惠4.3万 十款15万SUV年底购买推荐</a><span>12/16</span></li>
+			</ul>
+		</div>
+
+		<!-- 面板4：17-42万（截图4） -->
+		<div class="zhouli_tab-panel">
+			<a class="zhouli_title" href="javascript:;">改变品牌的未来 认识豪华品牌最便宜车型</a>
+			<ul>
+				<li><a href="javascript:;">爸爸去哪？亲子出游适合车型和注意事项</a><span>12/20</span></li>
+				<li><a href="javascript:;">推荐，X1等城市四驱Style+经济省油的SUV</a><span>12/19</span></li>
+				<li><a href="javascript:;">全景天窗/保养便利 30万办齐四驱SUV推荐</a><span>12/19</span></li>
+				<li><a href="javascript:;">最高暴降20万！奥迪Q5等年底特惠SUV盘点</a><span>12/18</span></li>
+				<li><a href="javascript:;">比拼硬实力 8款低配四驱紧凑SUV性能点评</a><span>12/18</span></li>
+				<li><a href="javascript:;">新蒙迪欧/雅阁等！盘点2013中级车大变脸</a><span>12/17</span></li>
+			</ul>
+		</div>
+
+		<!-- 面板5：SUV（截图5） -->
+		<div class="zhouli_tab-panel">
+			<a class="zhouli_title" href="javascript:;">改变品牌的未来 认识豪华品牌最便宜车型</a>
+			<ul>
+				<li><a href="javascript:;">推荐，X1等城市四驱Style+经济省油的SUV</a><span>12/19</span></li>
+				<li><a href="javascript:;">全景天窗/保养便利 30万办齐四驱SUV推荐</a><span>12/19</span></li>
+				<li><a href="javascript:;">最高暴降20万！奥迪Q5等年底特惠SUV盘点</a><span>12/18</span></li>
+				<li><a href="javascript:;">比拼硬实力 8款低配四驱紧凑SUV性能点评</a><span>12/18</span></li>
+				<li><a href="javascript:;">花小钱也能养SUV 翼博等入门SUV使用手册</a><span>12/17</span></li>
+				<li><a href="javascript:;">最高优惠4.3万 十款15万SUV年底购买推荐</a><span>12/16</span></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<a class="zhouli_back" href="index.html">返回首页</a>
+
+<script>
+	// 周丽 2026-11-02 GLM-5.3-Flash 功能：选项卡切换 —— 排他思想：先清除所有标签和面板的选中状态，再设置当前元素的选中状态
+	// 获取选项卡头部和内容区
+	var zhouliTabNav = document.getElementById("zhouli_tabNav");
+	var zhouliTabBox = document.getElementById("zhouli_tabBox");
+	// 获取所有的标签和对应的面板
+	var zhouliTabs = zhouliTabNav.getElementsByTagName("li");
+	var zhouliPanels = zhouliTabBox.getElementsByClassName("zhouli_tab-panel");
+
+	// 给每个标签绑定点击事件
+	for (var zhouliI = 0; zhouliI < zhouliTabs.length; zhouliI++) {
+		zhouliTabs[zhouliI].zhouliIndex = zhouliI;   // 把下标存到当前标签身上
+		zhouliTabs[zhouliI].onclick = function () {
+			// 1. 排他：先清空所有标签和面板的高亮样式
+			for (var zhouliJ = 0; zhouliJ < zhouliTabs.length; zhouliJ++) {
+				zhouliTabs[zhouliJ].className = "";
+				zhouliPanels[zhouliJ].className = "zhouli_tab-panel";
+			}
+			// 2. 再给当前点击的标签和对应面板添加样式
+			this.className = "zhouli_active";
+			zhouliPanels[this.zhouliIndex].className = "zhouli_tab-panel zhouli_active";
+		};
+	}
+</script>
+
+</body>
+</html>
