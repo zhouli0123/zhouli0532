@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!-- 周丽 2026-11-02 GLM-5.3-Flash 功能：新闻选项卡 —— 展示国内/省内/国际/最热四个新闻选项卡的切换，JS 逻辑外置于 js/zhouli_tab.js 并可复用 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新闻选项卡</title>
+  <style>
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_body —— 页面整体背景与字体 */
+    body.zhouli_body {
+      margin: 0;
+      padding: 40px 16px;
+      background: #eef1f5;
+      font-family: "Microsoft YaHei", sans-serif;
+      color: #333;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_box —— 居中卡片容器 */
+    .zhouli_box {
+      max-width: 640px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_page-title —— 页面标题 */
+    .zhouli_page-title {
+      margin: 0;
+      padding: 18px 24px;
+      font-size: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_back —— 返回首页链接 */
+    .zhouli_back {
+      display: inline-block;
+      margin: 16px 24px;
+      color: #2b6cb0;
+      text-decoration: none;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_tab-nav —— 选项卡导航条 */
+    .zhouli_tab-nav {
+      display: flex;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_tab-btn —— 单个选项卡按钮 */
+    .zhouli_tab-btn {
+      flex: 1;
+      padding: 12px 0;
+      border: none;
+      background: #f7f8fa;
+      font-size: 15px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_active —— 按钮/面板的选中状态 */
+    .zhouli_tab-btn.zhouli_active {
+      background: #fff;
+      color: #1a73e8;
+      font-weight: bold;
+      border-bottom: 2px solid #1a73e8;
+      margin-bottom: -2px;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_tab-panel —— 单个新闻面板（默认隐藏） */
+    .zhouli_tab-panel {
+      display: none;
+      padding: 8px 24px 20px;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_tab-panel.zhouli_active —— 显示当前选中的面板 */
+    .zhouli_tab-panel.zhouli_active {
+      display: block;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_news-list —— 新闻列表 */
+    .zhouli_news-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_news-list li —— 单条新闻的间距与分隔线 */
+    .zhouli_news-list li {
+      padding: 10px 0;
+      border-bottom: 1px dashed #eee;
+    }
+
+    /* 周丽 2026-11-02 GLM-5.3-Flash 功能：zhouli_news-date —— 新闻日期 */
+    .zhouli_news-date {
+      color: #999;
+      font-size: 13px;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body class="zhouli_body">
+  <div class="zhouli_box">
+    <h1 class="zhouli_page-title">今日新闻</h1>
+
+    <!-- 选项卡导航：国内新闻为默认选中 -->
+    <div class="zhouli_tab-nav" id="zhouli_newsTabs">
+      <button type="button" class="zhouli_tab-btn zhouli_active">国内新闻</button>
+      <button type="button" class="zhouli_tab-btn">省内新闻</button>
+      <button type="button" class="zhouli_tab-btn">国际新闻</button>
+      <button type="button" class="zhouli_tab-btn">最热新闻</button>
+    </div>
+
+    <!-- 选项卡面板：与按钮一一对应，顺序一致 -->
+    <div id="zhouli_newsPanels">
+      <div class="zhouli_tab-panel zhouli_active">
+        <ul class="zhouli_news-list">
+          <li>全国秋季粮食收获进度超过九成，丰收已成定局<span class="zhouli_news-date">2026-11-02</span></li>
+          <li>新版可再生能源电价机制明年起全面实施<span class="zhouli_news-date">2026-11-01</span></li>
+          <li>多条高铁新线今日开通，运输能力进一步提升<span class="zhouli_news-date">2026-11-01</span></li>
+        </ul>
+      </div>
+      <div class="zhouli_tab-panel">
+        <ul class="zhouli_news-list">
+          <li>省内首届数字经济博览会开幕，签约金额创新高<span class="zhouli_news-date">2026-11-02</span></li>
+          <li>全省高速公路充电桩实现服务区全覆盖<span class="zhouli_news-date">2026-10-31</span></li>
+          <li>我省三地上榜全国县域旅游综合实力百强<span class="zhouli_news-date">2026-10-30</span></li>
+        </ul>
+      </div>
+      <div class="zhouli_tab-panel">
+        <ul class="zhouli_news-list">
+          <li>多国代表呼吁加强全球气候资金支持<span class="zhouli_news-date">2026-11-02</span></li>
+          <li>国际航天会议公布新一轮深空探测合作计划<span class="zhouli_news-date">2026-11-01</span></li>
+          <li>全球海运价格持续回落，供应链压力缓解<span class="zhouli_news-date">2026-10-31</span></li>
+        </ul>
+      </div>
+      <div class="zhouli_tab-panel">
+        <ul class="zhouli_news-list">
+          <li>今日最热：新版个人养老金制度引发全民讨论<span class="zhouli_news-date">2026-11-02</span></li>
+          <li>热搜第一：国产大飞机新增两条商业航线<span class="zhouli_news-date">2026-11-01</span></li>
+          <li>热议话题：AI 助教走进多地中小学课堂<span class="zhouli_news-date">2026-11-01</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <a class="zhouli_back" href="index.html">返回首页</a>
+  </div>
+
+  <!-- 可复用的选项卡逻辑（外部 JS） -->
+  <script src="js/zhouli_tab.js"></script>
+  <script>
+    // 周丽 2026-11-02 GLM-5.3-Flash 功能：初始化调用 —— 用可复用函数绑定本页新闻选项卡
+    zhouli_initTabs("zhouli_newsTabs", "zhouli_newsPanels", "zhouli_active");
+  </script>
+</body>
+</html>

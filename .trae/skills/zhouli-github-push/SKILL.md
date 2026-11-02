@@ -25,6 +25,7 @@ description: 提交并推送当前项目到 GitHub 仓库 zhouli0532（git add�
 ## 说明
 
 - origin（Gitee）与 github 两个远程互不影响；用户要求"两边都推"时需分别推送，只推了一个要如实说明。
+- **本机 SSH 方案（2026-10-29 已验证）**：hosts 文件把 github.com 指到 127.0.0.1，已用 `C:\Users\周丽\.ssh\config` 把 github.com 的 SSH 导向 `ssh.github.com:443`（SSH over HTTPS）。git 推送时**必须**设 `GIT_SSH_COMMAND=C:/Windows/System32/OpenSSH/ssh.exe`（正斜杠！Git 的 sh 会吃掉反斜杠），否则报 "Could not read from remote repository"。
 - 推送报认证错误时，用 `ssh -T git@github.com` 自检公钥配置，把错误原文报告给用户，不要反复重试。
 
 ## 红线

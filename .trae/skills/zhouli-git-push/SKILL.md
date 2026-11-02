@@ -15,6 +15,7 @@ description: 提交并推送当前项目到 Gitee 仓库 zhouli532（git add、c
 4. 推送：
    - 日常推送：`git push`（分支 master 已跟踪 origin/master）。
    - 首次或未跟踪时：`git push -u origin master`。
+   - **注意（2026-10-29 起）**：master 的跟踪目标被 `git push -u github` 改成了 github/master，推 Gitee 请显式用 `git push origin master`。
 
 ## 远程未配置时的补救（仅当 `git remote -v` 为空）
 
