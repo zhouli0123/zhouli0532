@@ -20,6 +20,9 @@
   .zhouli-head h1{font-size:28px;letter-spacing:1px;line-height:1.5}
   .zhouli-head h1 b{color:#ffd166}
   .zhouli-head p{margin-top:10px;font-size:14.5px;color:#d9e3f5}
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-head-link —— 头部指向 zhouli_prompt.md 提示词日志的超链接样式 */
+  .zhouli-head a.zhouli-head-link{color:#ffd166;text-decoration:underline;text-underline-offset:3px}
+  .zhouli-head a.zhouli-head-link:hover{color:#fff}
 
   /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-sec —— 任务章节卡片 */
   .zhouli-sec{background:#fff;border-radius:18px;padding:26px 30px;margin-bottom:24px;border:1px solid #e8ecf5;box-shadow:0 4px 14px rgba(31,41,55,.06)}
@@ -55,6 +58,10 @@
   .zhouli-vs .zhouli-demo{margin:0}
   .zhouli-vs .swiper-slide{height:230px}
 
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-kb-status —— 键盘专项 demo 的 activeIndex 实时读数条 */
+  .zhouli-kb-status{text-align:center;font-size:14px;color:#374151;background:#f8faff;border:1px solid #dbe4ff;border-radius:8px;padding:8px 14px;margin-top:12px}
+  .zhouli-kb-status b{color:#e8890c;font-family:Consolas,monospace;font-size:16px}
+
   /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-qa —— 答辩备答问答块 */
   .zhouli-qa{background:#fffbea;border:1px solid #fde68a;border-radius:10px;padding:10px 16px;margin:8px 0;font-size:14px;color:#7c5e10}
   .zhouli-qa b{color:#b45309}
@@ -73,7 +80,7 @@
   <div class="zhouli-head">
     <span class="zhouli-badge">A I 协 作 过 程 记 录 · 提 示 词 访 问 入 口</span>
     <h1>Swiper 课堂任务 · <b>AI 提示词与验证记录</b></h1>
-    <p>周丽 · 2026-11-09 · 使用模型：GLM-5.3-Flash · 对应教师版《Swiper 轮播组件库 · 大国重器光影展》第 6 节"课堂任务 + 思政升华"</p>
+    <p>周丽 · 2026-11-09 · 使用模型：GLM-5.3-Flash · 对应教师版《Swiper 轮播组件库 · 大国重器光影展》第 6 节"课堂任务 + 思政升华" · 完整提示词日志：<a class="zhouli-head-link" href="zhouli_prompt.md" target="_blank">zhouli_prompt.md</a></p>
   </div>
 
   <!-- 任务一 -->
@@ -204,6 +211,22 @@
       <li><code class="zhouli-inline">enabled: true</code>——开启键盘控制，按 ←/→/↑/↓ 等方向键即可翻页；</li>
       <li><code class="zhouli-inline">onlyInViewport: true</code>——<b>只有轮播滚动到可视区域内时</b>方向键才归它管，防止页面其它地方按方向键（比如滚动网页）被轮播"劫持"。</li>
     </ul>
+    <h3>键盘交互专项 demo（新 demo：不自动播放，翻页全靠方向键，activeIndex 实时可见）</h3>
+    <div class="zhouli-demo">
+      <span class="zhouli-demo-tag">⌨️ 键盘交互专项：先点一下下方轮播让它进入视口，再按 ←/→ 方向键翻页——不设自动播放，翻不翻全看键盘</span>
+      <div class="zhouli-swiper">
+        <div class="swiper" id="zhouliSwKb">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="swiper-imgs/tiangong_1.jpg" alt="天宫空间站"><div class="zhouli-cap"><h3>天宫空间站</h3><p>第 1 张 · 按 → 试试</p></div></div>
+            <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="复兴号动车组"><div class="zhouli-cap"><h3>复兴号动车组</h3><p>第 2 张 · 键盘翻到我了</p></div></div>
+            <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"><div class="zhouli-cap"><h3>C919 大飞机</h3><p>第 3 张 · 按 ← 可以翻回去</p></div></div>
+            <div class="swiper-slide"><img src="swiper-imgs/aida_1.jpg" alt="爱达·魔都号"><div class="zhouli-cap"><h3>爱达·魔都号</h3><p>第 4 张 · 循环模式继续按 → 会绕回第 1 张</p></div></div>
+          </div>
+          <div class="swiper-pagination" id="zhouliPagKb"></div>
+        </div>
+      </div>
+      <p class="zhouli-kb-status">当前 realIndex：<b id="zhouliKbIndex">0</b>　（每次按方向键触发 slideChange，这里实时变化——键盘交互生效的可见证据）</p>
+    </div>
     <h3>亲自验证（下方六件展品轮播真实运行：点一下轮播再按方向键，或用鼠标滚轮试试翻页）</h3>
     <div class="zhouli-demo">
       <span class="zhouli-demo-tag">🎬 效果展示三 · 六件展品含「爱达·魔都号」+ keyboard 键盘翻页 + mousewheel 滚轮翻页（先点一下轮播再按 ←/→）</span>
@@ -278,6 +301,18 @@
     mousewheel: { forceToAxis: true },
     autoplay: { delay: 3200, disableOnInteraction: false },
     pagination: { el: "#zhouliPagDemo3", clickable: true }
+  });
+
+  // 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouliSwKb —— 任务三键盘交互专项 demo：只配 keyboard（无自动播放、无滚轮），按 ←/→ 翻页；slideChange 事件把 realIndex 实时写回读数条，作为键盘交互生效的可见证据
+  var zhouliSwKb = new Swiper("#zhouliSwKb", {
+    loop: true,
+    speed: 800,
+    keyboard: { enabled: true, onlyInViewport: true },
+    pagination: { el: "#zhouliPagKb", clickable: true }
+  });
+  // 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouliKbIndex 回显 —— 监听 slideChange，翻一次页读数 +1/-1（loop 模式用 realIndex 取真实序号）
+  zhouliSwKb.on("slideChange", function () {
+    document.getElementById("zhouliKbIndex").textContent = zhouliSwKb.realIndex;
   });
 </script>
 </body>
