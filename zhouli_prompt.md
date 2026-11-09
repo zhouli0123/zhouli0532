@@ -100,3 +100,47 @@
 - **使用的模型**：GLM-5.3-Flash
 - **提示词内容**：
   > 只提交刚刚新建的页面 d:\gaojiwangye\532周丽\tab-car.html 交到我的GitHub上面
+
+- **时间**：2026-11-02（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+  > 提交项目
+
+- **时间**：2026-11-02（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+  > 把 d:\gaojiwangye\532周丽\tab-car.html 页面交到 https://zhouli0123.github.io/zhouli0532/
+- **时间**：2026-11-05（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+  > 完成任务四 d:\gaojiwangye\532周丽\swiper-task.html，目标切换效果对应 https://spontaneous-valkyrie-4e4229.netlify.app/swiper-lesson 这个链接5.切换效果
+
+- **时间**：2026-11-05（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+  > 并且完成老师链接 https://spontaneous-valkyrie-4e4229.netlify.app/swiper-lesson 里面的6.课堂任务 + 思政升华，根据任务一项一项实现
+
+- **时间**：2026-11-05（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+  > 好的，按方案 1 执行（用户自行生成爱达·魔都号图片存为 swiper-imgs/aida_1.jpg，之后由我添加第 6 张 slide）
+
+- **时间**：2026-11-05（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+  > 图片好了（爱达·魔都号图片已就位，添加第 6 张 slide 并验证）
+
+- **时间**：2026-11-05（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+  > 把 d:\gaojiwangye\532周丽\swiper-task.html 文件加到index的模块里面，并且更新我的 https://cheerful-frangollo-29a781.netlify.app/
+
+- **时间**：2026-11-05（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+  > 不需要推到GitHub里面
+
+- **时间**：2026-11-09（Asia/Shanghai）
+- **使用的模型**：GLM-5.3-Flash
+- **提示词内容**：
+  > 提交到github上面
