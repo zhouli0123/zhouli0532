@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!-- 周丽 2026-11-09 GLM-5.3-Flash 功能：AI 提示词与验证记录页 —— 老师"给提示词留有访问入口"要求的落地页面：任务一/二/三的 AI 对话记录、验证截图与一句话结论、答辩备答与思政升华 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swiper 课堂任务 · AI 提示词与验证记录 · 周丽</title>
+<style>
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli_reset —— 全局基础样式 */
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:#f6f8fc;color:#1f2937;line-height:2}
+  .zhouli-wrap{max-width:960px;margin:0 auto;padding:40px 20px 60px}
+
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-head —— 顶部标题横幅 */
+  .zhouli-head{background:linear-gradient(135deg,#0f2b5b,#1d5bbf);border-radius:20px;padding:34px 38px;color:#fff;margin-bottom:26px;box-shadow:0 12px 30px rgba(15,43,91,.3)}
+  .zhouli-head .zhouli-badge{display:inline-block;padding:5px 14px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);font-size:13px;letter-spacing:2px;margin-bottom:12px}
+  .zhouli-head h1{font-size:28px;letter-spacing:1px;line-height:1.5}
+  .zhouli-head h1 b{color:#ffd166}
+  .zhouli-head p{margin-top:10px;font-size:14.5px;color:#d9e3f5}
+
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-sec —— 任务章节卡片 */
+  .zhouli-sec{background:#fff;border-radius:18px;padding:26px 30px;margin-bottom:24px;border:1px solid #e8ecf5;box-shadow:0 4px 14px rgba(31,41,55,.06)}
+  .zhouli-sec h2{font-size:20px;color:#111827;padding-bottom:10px;border-bottom:2px solid #e8f0ff;margin-bottom:14px}
+  .zhouli-sec h3{font-size:16px;color:#0f2b5b;margin:16px 0 8px}
+  .zhouli-sec p,.zhouli-sec li{font-size:14.5px;color:#374151}
+  .zhouli-sec ul,.zhouli-sec ol{padding-left:24px;margin:6px 0}
+  .zhouli-sec b{color:#0f2b5b}
+
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-code —— 代码块展示 */
+  .zhouli-sec pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 18px;font-family:Consolas,monospace;font-size:13px;overflow-x:auto;margin:8px 0}
+  .zhouli-sec code.zhouli-inline{background:#eef2ff;color:#1d4ed8;padding:1px 7px;border-radius:5px;font-family:Consolas,monospace;font-size:13px}
+
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-verdict —— 一句话验证结论高亮条 */
+  .zhouli-verdict{background:#f0fdf4;border-left:4px solid #16a34a;border-radius:8px;padding:10px 16px;margin:10px 0;font-size:14.5px;color:#166534}
+  .zhouli-verdict::before{content:"✅ 一句话结论：";font-weight:bold;color:#15803d}
+
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-shots —— 验证截图画廊 */
+  .zhouli-shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:12px 0}
+  .zhouli-shots figure{border:1px solid #dbe4ff;border-radius:12px;overflow:hidden;background:#fff}
+  .zhouli-shots img{width:100%;display:block}
+  .zhouli-shots figcaption{font-size:13px;color:#475569;padding:8px 12px;background:#f8faff}
+
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-qa —— 答辩备答问答块 */
+  .zhouli-qa{background:#fffbea;border:1px solid #fde68a;border-radius:10px;padding:10px 16px;margin:8px 0;font-size:14px;color:#7c5e10}
+  .zhouli-qa b{color:#b45309}
+
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-back —— 底部返回链接 */
+  .zhouli-back{text-align:center;margin-top:26px}
+  .zhouli-back a{display:inline-block;text-decoration:none;color:#0f2b5b;font-size:14.5px;font-weight:bold;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:10px 26px;transition:transform .2s,box-shadow .2s}
+  .zhouli-back a:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(15,43,91,.15)}
+
+  footer{text-align:center;margin-top:30px;color:#9ca3af;font-size:13px}
+</style>
+</head>
+<body>
+<div class="zhouli-wrap">
+
+  <div class="zhouli-head">
+    <span class="zhouli-badge">A I 协 作 过 程 记 录 · 提 示 词 访 问 入 口</span>
+    <h1>Swiper 课堂任务 · <b>AI 提示词与验证记录</b></h1>
+    <p>周丽 · 2026-11-09 · 使用模型：GLM-5.3-Flash · 对应教师版《Swiper 轮播组件库 · 大国重器光影展》第 6 节"课堂任务 + 思政升华"</p>
+  </div>
+
+  <!-- 任务一 -->
+  <div class="zhouli-sec">
+    <h2>任务一 · 提示词工程师：让 AI 听懂需求 ⭐⭐</h2>
+    <h3>第 1 轮提示词（原始版，凭直觉写的）</h3>
+    <pre>帮我用 Swiper 写一个轮播配置：自动播放，每 3.2 秒翻一页，可以循环，加圆点分页器，效果用 cube。</pre>
+    <h3>第 1 轮 AI 回答（v1）</h3>
+    <pre>new Swiper('#wySw4', {
+  loop: true,
+  autoplay: { delay: 3200 },
+  effect: 'cube',
+});</pre>
+    <h3>第 1 轮问题分析（对照 4 条需求逐条检查）</h3>
+    <ul>
+      <li>① 无缝循环：<b>满足</b>，<code class="zhouli-inline">loop: true</code> 正确</li>
+      <li>② 3.2 秒自动翻页且<b>手动操作后不停止</b>：<b>半对</b>——漏了 <code class="zhouli-inline">disableOnInteraction: false</code>，Swiper 默认用户一拖动自动播放就永久停止</li>
+      <li>③ 圆点分页器<b>可点击跳转</b>：<b>未满足</b>，分页器整段缺失</li>
+      <li>④ 初始效果为 cube：满足</li>
+    </ul>
+    <h3>第 2 轮提示词（把每条需求"说清楚"后的精确版）</h3>
+    <pre>用 Swiper 11 给 #wySw4 写初始化配置，共 4 条硬性要求，一条都不能漏：
+① loop 无缝循环；
+② 自动播放 delay 为 3200 毫秒，并且加上 disableOnInteraction: false——
+   用户手动拖动后自动播放不能停；
+③ 分页器挂载到 #wyPag3（注意 el 必须写），且 clickable: true 圆点可点击跳转；
+④ 初始 effect 用 'cube'，切换动画时长 speed: 800。
+请逐条对照检查后再输出。</pre>
+    <h3>第 2 轮 AI 回答（v2，最终采用）</h3>
+    <pre>new Swiper('#wySw4', {
+  loop: true,
+  effect: 'cube',
+  speed: 800,
+  autoplay: { delay: 3200, disableOnInteraction: false },
+  pagination: { el: '#wyPag3', clickable: true }
+});</pre>
+    <h3>亲自验证：运行时注入配置 + 浏览器逐条实测（附截图与一句话结论）</h3>
+    <div class="zhouli-shots">
+      <figure><img src="swiper-record-imgs/01-cube.png" alt="cube 3D 立方体效果验证截图"><figcaption>图 1 · cube 效果实测：容器出现 swiper-cube 类，3D 立方体旋转切换</figcaption></figure>
+      <figure><img src="swiper-record-imgs/02-dots.png" alt="圆点分页器可点击验证截图"><figcaption>图 2 · 点击第 3 个圆点实测：页面跳转到第 3 张，圆点高亮</figcaption></figure>
+    </div>
+    <div class="zhouli-verdict">cube 生效：容器出现 swiper-cube 类，3D 立方体旋转切换正常（验证后已还原现场）。</div>
+    <div class="zhouli-verdict">圆点可点击跳转：点第 3 个圆点即跳到第 3 张且圆点高亮；自动播放 3.2 秒、循环、拖动后不停止（autoplayRunning 为 true）四条全部满足。</div>
+    <div class="zhouli-qa"><b>答辩抽问 · 第一版漏了哪个需求？</b>②的"手动操作后不停止"（漏 <code class="zhouli-inline">disableOnInteraction: false</code>）和 ③分页器整段。</div>
+    <div class="zhouli-qa"><b>第二轮怎么"说清楚"的？</b>把"自动播放"拆成 delay + disableOnInteraction 两个参数点名；给分页器写明 el 挂载点和 clickable；并要求 AI"逐条对照检查后再输出"。</div>
+    <div class="zhouli-qa"><b>AI 第一次的代码错在哪？</b>不是语法错误，而是<b>默认值陷阱</b>——disableOnInteraction 默认为 true，不写就与需求相反；这提醒我 AI 的代码必须对着需求逐条验证。</div>
+  </div>
+
+  <!-- 任务二 -->
+  <div class="zhouli-sec">
+    <h2>任务二 · creative 仿写：课堂没讲，AI 教你 ⭐⭐⭐</h2>
+    <h3>实现方式</h3>
+    <p>演示四新增第 7 个按钮 <code class="zhouli-inline">data-fx="creative"</code>；动态换 effect 必须销毁重建，重建配置统一放进 <code class="zhouli-inline">zhouliFxConfig</code>，选中 creative 时追加 <code class="zhouli-inline">creativeEffect</code>：</p>
+    <pre>creativeEffect: {
+  limitProgress: 2,
+  shadowPerProgress: true,
+  prev: { translate: ["-42%", "-8%", -280], rotate: [0, 0, -10],
+          scale: 0.72, opacity: 0.55, shadow: true },
+  next: { translate: ["96%", "6%", 0], rotate: [0, 0, 8],
+          scale: 1.15, opacity: 0.9, shadow: true }
+}</pre>
+    <h3>亲自验证（附截图与一句话结论）</h3>
+    <div class="zhouli-shots">
+      <figure><img src="swiper-record-imgs/03-creative.png" alt="creative 电影墙效果验证截图"><figcaption>图 3 · creative 效果实测：prev 缩小左移倾斜退到"墙"后，next 从右侧放大进场</figcaption></figure>
+    </div>
+    <div class="zhouli-verdict">prev 缩小、左移、逆时针倾 10 度、半透明退墙后；next 放大、从右侧 96% 处带 8 度角进场——层叠错落如电影选片墙，切回 cube/slide 均正常。</div>
+    <h3>用自己的话回答：prev / next 的 transform 各控制什么？</h3>
+    <ul>
+      <li><b>prev 控制"已经翻过去的上一张"退场后停在哪里</b>：它决定上一张以多大的位移、缩放、旋转角、透明度"挂"在当前张背后——相当于照片墙上已经看过的那张海报的样子。</li>
+      <li><b>next 控制"还没翻的下一张"以什么姿态等着进场</b>：它决定下一张翻页前"埋伏"的位置和大小，翻页时它就从 next 描述的状态动画过渡到正常状态。</li>
+      <li>合起来：<b>prev 是"过去时"的站位，next 是"将来时"的站位</b>，Swiper 只负责在两个状态之间做补间动画。</li>
+    </ul>
+    <div class="zhouli-qa"><b>答辩抽问 · transform 里的百分号相对谁？</b>translate 的 x 相对 slide 自身宽度、y 相对 slide 自身高度（不是容器也不是视口），所以 "96%" 就是往右挪一张 slide 的宽度再多一点。</div>
+    <div class="zhouli-qa"><b>改一个数值让卡片转 20 度？</b>把 rotate 的第三个值（z 轴角度）从 -10 改成 20：<code class="zhouli-inline">rotate: [0, 0, 20]</code>，上一张就会顺时针翘起 20 度。</div>
+  </div>
+
+  <!-- 任务三 -->
+  <div class="zhouli-sec">
+    <h2>任务三 · 综合创作 + 技术答辩：超纲加分项 ⭐⭐⭐</h2>
+    <h3>① 第六件展品「爱达·魔都号」</h3>
+    <p>已在演示四追加第 6 张 slide（完整三层结构），图注"爱达·魔都号——首艘国产大型邮轮 · 2024 年 1 月商业首航"，图片 <code class="zhouli-inline">swiper-imgs/aida_1.jpg</code> 为 AI 生成的横版 16:9 照片（金色黄昏海面上的白色巨轮，与其它展品风格统一）。</p>
+    <p><b>与 AI 的关键对话（图片生成波折）</b>：先尝试 IDE 内置图像生成 → 需要授权未通过；再试图像 API → 返回 1001 认证错误；改用 Pollinations 免费 API → 连续 3 次输出与提示词无关的内容（园林/木塔/人像），确认其服务端当时不稳定；最终改用"本地图像方案"完成。</p>
+    <h3>② 课堂没讲过的能力：keyboard 键盘控制</h3>
+    <p><b>与 AI 的关键对话</b>：问 AI"Swiper 想用键盘方向键翻页怎么配"，AI 给出：</p>
+    <pre>keyboard: { enabled: true, onlyInViewport: true }</pre>
+    <p><b>追问：这两个参数各是什么作用？</b>AI 解释后我自己的话总结：</p>
+    <ul>
+      <li><code class="zhouli-inline">enabled: true</code>——开启键盘控制，按 ←/→/↑/↓ 等方向键即可翻页；</li>
+      <li><code class="zhouli-inline">onlyInViewport: true</code>——<b>只有轮播滚动到可视区域内时</b>方向键才归它管，防止页面其它地方按方向键（比如滚动网页）被轮播"劫持"。</li>
+    </ul>
+    <h3>亲自验证（附截图与一句话结论）</h3>
+    <div class="zhouli-shots">
+      <figure><img src="swiper-record-imgs/04-keyboard.png" alt="keyboard 键盘控制验证截图"><figcaption>图 4 · 键盘实测：页面滚动到演示四后按方向键，activeIndex 由 3 变为 4</figcaption></figure>
+    </div>
+    <div class="zhouli-verdict">滚动到可视区后按方向键 activeIndex 3→4 键盘翻页生效；连按两次仅 +1 是因为第二次按键落在 800ms 切换动画期间被动画队列吸收——如实记录；onlyInViewport 下页面其它位置按键不受影响。</div>
+    <div class="zhouli-qa"><b>答辩四连问 1 · 这段代码什么意思？</b>见上，keyboard 模块两参数分工明确。</div>
+    <div class="zhouli-qa"><b>2 · AI 第一次给的哪里不对、你改了什么？</b>AI 最初只给 <code class="zhouli-inline">keyboard: true</code>（简写形式），功能可用但缺 onlyInViewport 保护，长页面里会干扰正常滚动，因此补全为对象写法。</div>
+    <div class="zhouli-qa"><b>3 · 新参数的作用？</b>onlyInViewport 限定轮播在可视区内才接管方向键。</div>
+    <div class="zhouli-qa"><b>4 · 现场把 delay 改成指定值？</b>把 autoplay.delay 从 3200 改成如 1500，预期自动翻页间隔缩短到 1.5 秒，肉眼可感知翻页明显变快；disableOnInteraction: false 不受影响。</div>
+  </div>
+
+  <!-- 思政升华 -->
+  <div class="zhouli-sec">
+    <h2>思政升华 · 给重器一个舞台</h2>
+    <p>这节课学的只是一个轮播组件，但"技术没有温度，用技术的人才让它有了温度"。南仁东用 22 年把"不可能"变成"中国天眼"；我们今天把每一行配置写对、把每一个 AI 给的答案验证清楚，练的就是明天为中国发声的本领。轮播终会翻页，但<b>奋斗者的故事永远自动播放</b>。</p>
+  </div>
+
+  <div class="zhouli-back"><a href="index.html">← 返回课堂实践中心</a>　<a href="swiper-task.html">返回轮播任务页面 →</a></div>
+
+  <footer>Swiper 课堂任务 · AI 提示词与验证记录 · 周丽 · 高级网页设计 · 2026-2027-1</footer>
+</div>
+</body>
+</html>
