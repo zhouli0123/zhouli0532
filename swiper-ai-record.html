@@ -90,7 +90,7 @@
     <h3>第 1 轮问题分析（对照 4 条需求逐条检查）</h3>
     <ul>
       <li>① 无缝循环：<b>满足</b>，<code class="zhouli-inline">loop: true</code> 正确</li>
-      <li>② 3.2 秒自动翻页且<b>手动操作后不停止</b>：<b>半对</b>——漏了 <code class="zhouli-inline">disableOnInteraction: false</code>，Swiper 默认用户一拖动自动播放就永久停止</li>
+      <li>② 3.2 秒自动翻页且<b>手动操作后不停止</b>：<b>半对</b>——能自动翻，但漏了 <code class="zhouli-inline">disableOnInteraction: false</code>，"手动操作后不停止"没有落成参数，正确性全交给版本默认值兜底（本课 v11 默认恰好是 false，Swiper 8 及以前默认 true 一拖就停，跨版本不稳）</li>
       <li>③ 圆点分页器<b>可点击跳转</b>：<b>未满足</b>，分页器整段缺失</li>
       <li>④ 初始效果为 cube：满足</li>
     </ul>
@@ -113,21 +113,21 @@
     <h3>亲自验证：两轮配置都在本页真实运行，左右对比直接看优化</h3>
     <div class="zhouli-vs">
       <div class="zhouli-demo">
-        <span class="zhouli-demo-tag">❌ 第 1 轮 · v1 原始配置真实运行：没有圆点；拖一下松手，自动播放就永久停了</span>
+        <span class="zhouli-demo-tag">❌ 第 1 轮 · v1 原始配置真实运行：没有圆点可点；"手动操作后不停止"没写成参数，行为全看版本默认值</span>
         <div class="zhouli-swiper">
           <div class="swiper" id="zhouliSwV1">
             <div class="swiper-wrapper">
               <div class="swiper-slide"><img src="swiper-imgs/tiangong_1.jpg" alt="天宫空间站"><div class="zhouli-cap"><h3>天宫空间站</h3><p>v1 没写分页器 → 圆点整段缺失</p></div></div>
-              <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="复兴号动车组"><div class="zhouli-cap"><h3>复兴号动车组</h3><p>v1 漏 disableOnInteraction → 拖完就停</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="复兴号动车组"><div class="zhouli-cap"><h3>复兴号动车组</h3><p>"手动不停止"没落成参数</p></div></div>
               <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"><div class="zhouli-cap"><h3>C919 大飞机</h3><p>试试拖一下再松手</p></div></div>
-              <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"><div class="zhouli-cap"><h3>奋斗者号</h3><p>停住不动了？这就是 v1 的缺陷</p></div></div>
-              <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"><div class="zhouli-cap"><h3>中国天眼 FAST</h3><p>cube 效果本身没问题</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"><div class="zhouli-cap"><h3>奋斗者号</h3><p>还能翻？这是 v11 默认 false 兜底，不是 v1 写对了</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"><div class="zhouli-cap"><h3>中国天眼 FAST</h3><p>正确性不能靠碰运气</p></div></div>
             </div>
           </div>
         </div>
       </div>
       <div class="zhouli-demo">
-        <span class="zhouli-demo-tag">✅ 第 2 轮 · v2 精确配置真实运行：圆点可点跳转；拖动后自动播放照常继续</span>
+        <span class="zhouli-demo-tag">✅ 第 2 轮 · v2 精确配置真实运行：圆点可点跳转；disableOnInteraction: false 白纸黑字钉死"拖动后不停止"</span>
         <div class="zhouli-swiper">
           <div class="swiper" id="zhouliSwV2">
             <div class="swiper-wrapper">
@@ -142,11 +142,12 @@
         </div>
       </div>
     </div>
+    <div class="zhouli-qa"><b>为什么不写参数，拖完也还在播？（版本默认值陷阱）</b>查了本课用的 Swiper 11 源码：autoplay 的 <code class="zhouli-inline">disableOnInteraction</code> 默认是 <b>false</b>，不写时用户拖动只会"暂停、动画结束后自动恢复"，不会永久停；Swiper 8 及以前默认才是 true（一拖就停）。所以 v1 的问题不是"当场必然停"，而是<b>没有把需求落成参数，正确性依赖碰巧的默认值</b>——显式写出 disableOnInteraction: false，AI 的输出才跨版本都稳。</div>
     <div class="zhouli-verdict">cube 生效：容器出现 swiper-cube 类，3D 立方体旋转切换正常（验证后已还原现场）。</div>
     <div class="zhouli-verdict">圆点可点击跳转：点第 3 个圆点即跳到第 3 张且圆点高亮；自动播放 3.2 秒、循环、拖动后不停止（autoplayRunning 为 true）四条全部满足。</div>
     <div class="zhouli-qa"><b>答辩抽问 · 第一版漏了哪个需求？</b>②的"手动操作后不停止"（漏 <code class="zhouli-inline">disableOnInteraction: false</code>）和 ③分页器整段。</div>
     <div class="zhouli-qa"><b>第二轮怎么"说清楚"的？</b>把"自动播放"拆成 delay + disableOnInteraction 两个参数点名；给分页器写明 el 挂载点和 clickable；并要求 AI"逐条对照检查后再输出"。</div>
-    <div class="zhouli-qa"><b>AI 第一次的代码错在哪？</b>不是语法错误，而是<b>默认值陷阱</b>——disableOnInteraction 默认为 true，不写就与需求相反；这提醒我 AI 的代码必须对着需求逐条验证。</div>
+    <div class="zhouli-qa"><b>AI 第一次的代码错在哪？</b>不是语法错误，而是<b>需求没落成参数 + 默认值陷阱</b>——分页器整段缺失是硬伤；disableOnInteraction 未声明，"手动操作后不停止"只能靠版本默认值兜底（v11 默认 false 恰好不停，Swiper 8 及以前默认 true 一拖就停）；这提醒我 AI 的代码必须对着需求逐条验证。</div>
   </div>
 
   <!-- 任务二 -->
@@ -239,7 +240,7 @@
 </div>
 
 <script>
-  // 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouliSwV1 —— 任务一对比展示左侧：第 1 轮 v1 原始配置原样运行（无分页器；disableOnInteraction 缺省为 true，用户拖动后自动播放永久停止），与右侧 v2 对比体现提示词优化
+  // 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouliSwV1 —— 任务一对比展示左侧：第 1 轮 v1 原始配置原样运行（无分页器；disableOnInteraction 未显式声明，行为依赖版本默认值——v9+ 默认 false 拖完自动恢复，v8 及以前默认 true 一拖就停），与右侧 v2 对比体现提示词优化
   var zhouliSwV1 = new Swiper("#zhouliSwV1", {
     loop: true,
     autoplay: { delay: 3200 },
