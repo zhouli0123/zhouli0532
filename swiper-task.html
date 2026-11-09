@@ -264,7 +264,12 @@
 
 
   // ── 任务 3：初始化 #wySw3，循环 + 2.6 秒自动翻页 + 拖动后不停 + 圆点 ──
-  // TODO: 在这里写你的代码
+  // 周丽 2026-11-09 GLM-5.3-Flash 功能：wySw3 自动轮播 —— 循环 + 每 2.6 秒自动翻页 + 手动拖动后不停止（disableOnInteraction: false）+ 底部圆点分页器可点击
+  var wySw3 = new Swiper("#wySw3", {
+    loop: true,
+    autoplay: { delay: 2600, disableOnInteraction: false },
+    pagination: { el: "#wyPag3", clickable: true }
+  });
 
 
   // ── 任务 4：初始化 #wySw4，循环 + 3.2 秒自动播放 + 圆点 + 初始 effect ──
