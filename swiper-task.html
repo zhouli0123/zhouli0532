@@ -76,6 +76,22 @@
   .wy-fx button:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(29,91,191,.18)}
   .wy-fx button.wy-on{background:linear-gradient(135deg,#0f2b5b,#1d5bbf);color:#fff;border-color:transparent}
 
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli_result —— 课堂任务一/二/三 AI 协作成果区新增样式（新代码按规则加 zhouli_ 前缀） */
+  .zhouli_prompt{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:12px 16px;font-family:Consolas,monospace;font-size:13px;overflow-x:auto;margin:8px 0;white-space:pre-wrap;word-break:break-all}
+  .zhouli_check{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:10px 16px;margin:10px 0;font-size:14px;color:#7f1d1d}
+  .zhouli_check b{color:#b91c1c}
+  .zhouli_plain{background:#fffbea;border:1px solid #fde68a;border-radius:12px;padding:12px 18px;margin:12px 0;font-size:14px;color:#7c5e10}
+  .zhouli_plain b{color:#b45309}
+  .zhouli_plain table{border-collapse:collapse;width:100%;margin-top:8px;font-size:13.5px}
+  .zhouli_plain th,.zhouli_plain td{border:1px solid #fde68a;padding:6px 10px;text-align:left;vertical-align:top}
+  .zhouli_plain th{background:#fef3c7;color:#92400e}
+  .zhouli_verdict{background:#f0fdf4;border-left:4px solid #16a34a;border-radius:8px;padding:10px 16px;margin:10px 0;font-size:14.5px;color:#166534}
+  .zhouli_verdict::before{content:"✅ 一句话结论：";font-weight:bold;color:#15803d}
+  .zhouli_shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:12px 0}
+  .zhouli_shots figure{border:1px solid #dbe4ff;border-radius:12px;overflow:hidden;background:#fff}
+  .zhouli_shots img{width:100%;display:block}
+  .zhouli_shots figcaption{font-size:13px;color:#475569;padding:8px 12px;background:#f8faff}
+
   .wy-back{text-align:center;margin-top:28px}
   .wy-back a{display:inline-block;text-decoration:none;color:#0f2b5b;font-size:14.5px;font-weight:bold;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:10px 26px;transition:transform .2s,box-shadow .2s}
   .wy-back a:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(15,43,91,.15)}
@@ -231,6 +247,77 @@
     </div>
   </div>
 
+  <!-- 周丽 2026-11-09 GLM-5.3-Flash 功能：课堂任务一/二/三 AI 协作成果区 —— 按老师要求在本页补齐：任务一两轮提示词与结论、任务二 creative 白话解释、任务三第六件展品与课堂外新能力 -->
+  <div class="wy-sec">
+    <div class="wy-sec-head">
+      <span class="wy-no">✦</span>
+      <h2>课堂任务 · AI 协作成果（任务一 / 二 / 三）<small>提示词工程师 + creative 仿写 + 新展品与新能力</small></h2>
+    </div>
+
+    <!-- 任务一 -->
+    <h3 style="font-size:17px;color:#0f2b5b;margin:18px 0 8px">📌 任务一 · 提示词工程师：让 AI 听懂需求 ⭐⭐</h3>
+    <p class="wy-txt">第 1 轮凭直觉写提示词，把 AI 的回答粘进页面验证后<b>逐条对照 4 条需求找漏洞</b>；第 2 轮把每条需求编号说清楚。最终 v2 配置已真实跑在上面的<b>演示四</b>里。</p>
+    <p class="wy-txt"><b>第 1 轮提示词（原始版）：</b></p>
+    <div class="zhouli_prompt">帮我用 Swiper 写一个轮播配置：自动播放，每 3.2 秒翻一页，可以循环，加圆点分页器，效果用 cube。</div>
+    <div class="zhouli_check">
+      <p><b>AI 回答 v1 粘贴进页面验证后的问题：</b></p>
+      <p>① 循环 ✅；② 3.2 秒自动翻页<b>半对</b>——漏了 <code>disableOnInteraction: false</code>，默认一拖动自动播放就永久停止；③ 圆点分页器<b>整段缺失</b>，也没写 clickable 可点击跳转；④ cube 效果 ✅。</p>
+    </div>
+    <p class="wy-txt"><b>第 2 轮提示词（精确版，逐条编号）：</b></p>
+    <div class="zhouli_prompt">用 Swiper 11 给 #wySw4 写初始化配置，共 4 条硬性要求，一条都不能漏：
+① loop 无缝循环；
+② 自动播放 delay 为 3200 毫秒，并且加上 disableOnInteraction: false——用户手动拖动之后自动播放必须继续，不能停；
+③ 圆点分页器：pagination 要同时写 el 指向 #wyPag4，并且 clickable: true 让圆点可以点击跳转；
+④ 初始效果 effect: 'cube'。
+最后把 4 条逐条标注在代码注释里，方便我核对。</div>
+    <div class="zhouli_shots">
+      <figure>
+        <img src="swiper-record-imgs/01-cube.png" alt="任务一 cube 立方体验证截图">
+        <figcaption>v2 配置粘贴进页面验证：cube 立方体 + 可点圆点（实拍）</figcaption>
+      </figure>
+    </div>
+    <div class="zhouli_verdict">第 2 轮提示词产出的 v2 配置粘贴进页面后，循环、3.2 秒自动翻页且拖动不停、圆点可点击跳转、cube 立方体 4 条硬性要求全部通过验证。</div>
+
+    <!-- 任务二 -->
+    <h3 style="font-size:17px;color:#0f2b5b;margin:18px 0 8px">📌 任务二 · creative 效果仿写：第 7 个按钮"电影墙" ⭐⭐⭐</h3>
+    <p class="wy-txt">课堂只讲了 6 种 effect，<b>creative 是查官方文档自学的第 7 种</b>——上面演示四的按钮区已追加"creative 电影墙"，仿写要点：prev 缩小左移带角度退到"墙"后面，next 放大右移进场。白话解释如下：</p>
+    <div class="zhouli_plain">
+      <p><b>一句话想象：</b>电影选片墙上，当前海报摆正中间；往左翻，旧海报<b>斜着退到墙后面</b>变小变淡，新海报<b>从右边放大着抢过来</b>盖在最前面。</p>
+      <table>
+        <tr><th>参数</th><th>prev（退场的旧海报）</th><th>白话</th></tr>
+        <tr><td>translate</td><td>["-42%", "-8%", -280]</td><td>往左挪自己宽度的 42%、往上抬 8%、沿 Z 轴往屏幕里推远 280 像素（负值＝离你更远）</td></tr>
+        <tr><td>rotate</td><td>[0, 0, -10]</td><td>绕 Z 轴逆时针歪 10 度——像随手斜靠在墙上</td></tr>
+        <tr><td>scale</td><td>0.72</td><td>缩小到 72%，退居"背景"</td></tr>
+        <tr><td>opacity + shadow</td><td>0.55 / true</td><td>半透明不抢戏，投影带来"贴在墙上"的厚度感</td></tr>
+        <tr><th>参数</th><th>next（进场的新海报）</th><th>白话</th></tr>
+        <tr><td>translate</td><td>["96%", "6%", 0]</td><td>从右边自己的 96% 宽处入场、往下偏 6%，Z 轴 0 不进深</td></tr>
+        <tr><td>rotate</td><td>[0, 0, 8]</td><td>顺时针歪 8 度——带着"甩进来"的动感</td></tr>
+        <tr><td>scale</td><td>1.15</td><td>比当前还大 15%，像大牌翻到最前面压过观众席</td></tr>
+        <tr><td>opacity + shadow</td><td>0.9 / true</td><td>接近不透明，进场就很"实"，投影让它浮在旧海报之上</td></tr>
+      </table>
+      <p style="margin-top:8px"><b>两个总开关：</b><code>limitProgress: 2</code> 让墙上能看到前后各 2 张的渐进变化；<code>shadowPerProgress: true</code> 每多退一张影子加深一层，层叠感更强。</p>
+    </div>
+    <div class="zhouli_shots">
+      <figure>
+        <img src="swiper-record-imgs/03-creative.png" alt="任务二 creative 电影墙验证截图">
+        <figcaption>creative 电影墙：prev 退到墙后，next 放大进场（实拍）</figcaption>
+      </figure>
+    </div>
+    <div class="zhouli_verdict">第 7 个按钮 creative 电影墙仿写成功：prev 按 translate/rotate/scale 缩小左移歪 10 度退到墙后，next 放大 1.15 倍右移歪 8 度进场，limitProgress:2 + shadowPerProgress 营造前后各两张的层叠投影。</div>
+
+    <!-- 任务三 -->
+    <h3 style="font-size:17px;color:#0f2b5b;margin:18px 0 8px">📌 任务三 · 第六件展品 + 课堂没讲过的新能力 ⭐⭐⭐</h3>
+    <p class="wy-txt"><b>① 第六件展品：</b>演示四已新增<b>爱达·魔都号</b>（首艘国产大型邮轮，2024 年 1 月商业首航），配图为 AI 生成的横版 16:9 图片 <code>swiper-imgs/aida_1.jpg</code>，大国重器展品从 5 件扩到 6 件。</p>
+    <p class="wy-txt"><b>② 课堂没讲过的新能力：</b>两个都做了——<code>keyboard</code> 键盘方向键翻页（<code>onlyInViewport: true</code> 防止劫持页面其它按键，需先点一下轮播获得焦点）；本次又新增 <code>mousewheel</code> <b>鼠标滚轮翻页</b>（<code>forceToAxis: true</code> 只在水平滚动时翻页，不干扰页面上下滚动）。</p>
+    <div class="zhouli_shots">
+      <figure>
+        <img src="swiper-record-imgs/04-keyboard.png" alt="任务三 keyboard 键盘翻页验证截图">
+        <figcaption>keyboard 键盘翻页能力（实拍）</figcaption>
+      </figure>
+    </div>
+    <div class="zhouli_verdict">第六件展品爱达·魔都号已入列大国重器光影展，课堂没讲过的 keyboard 键盘翻页与 mousewheel 滚轮翻页两种新能力均已实现并验证可用。</div>
+  </div>
+
   <div class="wy-back"><a href="index.html">← 返回课堂实践中心</a>　<a href="swiper-ai-record.html">📋 AI 提示词与验证记录（周丽）→</a>　<a href="swiper-lesson.html">查看教师讲解版 →</a></div>
 
   <footer>Swiper 课堂操作任务 · 大国重器光影展（学生版） · 高级网页设计 · 2026-2027-1</footer>
@@ -274,11 +361,13 @@
 
   // ── 任务 4：初始化 #wySw4，循环 + 3.2 秒自动播放 + 圆点 + 初始 effect ──
   // 周丽 2026-11-05 GLM-5.3-Flash 功能：wySw4 初始化 —— 循环 + 3.2 秒自动播放（手动操作后不停止）+ 圆点分页器可点击，初始 slide 效果、动画时长 800 毫秒；任务三② 新增 keyboard 键盘方向键翻页（onlyInViewport 防止劫持页面其它按键）
+  // 周丽 2026-11-09 GLM-5.3-Flash 功能：wySw4 追加 mousewheel —— 任务三② 课堂没讲过的新能力：鼠标滚轮翻页，forceToAxis 只在水平滚动轴上翻页、不干扰页面上下滚动
   var wySw4 = new Swiper("#wySw4", {
     loop: true,
     effect: "slide",
     speed: 800,
     keyboard: { enabled: true, onlyInViewport: true },
+    mousewheel: { forceToAxis: true },
     autoplay: { delay: 3200, disableOnInteraction: false },
     pagination: { el: "#wyPag4", clickable: true }
   });
@@ -307,6 +396,7 @@
         effect: btn.dataset.fx,
         speed: 800,
         keyboard: { enabled: true, onlyInViewport: true },
+        mousewheel: { forceToAxis: true },
         autoplay: { delay: 3200, disableOnInteraction: false },
         pagination: { el: "#wyPag4", clickable: true }
       };
