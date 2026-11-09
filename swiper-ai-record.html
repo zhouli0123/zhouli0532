@@ -50,6 +50,11 @@
   .zhouli-swiper .swiper-pagination-bullet{background:#0f2b5b;opacity:.35}
   .zhouli-swiper .swiper-pagination-bullet-active{background:#e8890c;opacity:1;width:22px;border-radius:6px}
 
+  /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-vs —— 任务一两轮配置左右对比布局（v1 vs v2，体现提示词优化） */
+  .zhouli-vs{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start;margin:16px 0 6px}
+  .zhouli-vs .zhouli-demo{margin:0}
+  .zhouli-vs .swiper-slide{height:230px}
+
   /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-qa —— 答辩备答问答块 */
   .zhouli-qa{background:#fffbea;border:1px solid #fde68a;border-radius:10px;padding:10px 16px;margin:8px 0;font-size:14px;color:#7c5e10}
   .zhouli-qa b{color:#b45309}
@@ -105,19 +110,35 @@
   autoplay: { delay: 3200, disableOnInteraction: false },
   pagination: { el: '#wyPag3', clickable: true }
 });</pre>
-    <h3>亲自验证：浏览器逐条实测（下方为本页真实运行的效果展示 + 一句话结论）</h3>
-    <div class="zhouli-demo">
-      <span class="zhouli-demo-tag">🎬 效果展示一 · v2 最终配置真实运行：cube 立方体 + 3.2 秒自动翻页 + 可点圆点（拖一下松手它还会接着翻）</span>
-      <div class="zhouli-swiper">
-        <div class="swiper" id="zhouliSwDemo1">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide"><img src="swiper-imgs/tiangong_1.jpg" alt="天宫空间站"><div class="zhouli-cap"><h3>天宫空间站</h3><p>2022 年全面建成 · 中国人的太空家园</p></div></div>
-            <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="复兴号动车组"><div class="zhouli-cap"><h3>复兴号动车组</h3><p>350 km/h · 世界商业运营最高时速</p></div></div>
-            <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"><div class="zhouli-cap"><h3>C919 大飞机</h3><p>2023 年商业首航 · 国产干线客机</p></div></div>
-            <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"><div class="zhouli-cap"><h3>奋斗者号</h3><p>10909 米 · 触碰地球第四极</p></div></div>
-            <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"><div class="zhouli-cap"><h3>中国天眼 FAST</h3><p>500 米口径 · 世界最大单口径射电望远镜</p></div></div>
+    <h3>亲自验证：两轮配置都在本页真实运行，左右对比直接看优化</h3>
+    <div class="zhouli-vs">
+      <div class="zhouli-demo">
+        <span class="zhouli-demo-tag">❌ 第 1 轮 · v1 原始配置真实运行：没有圆点；拖一下松手，自动播放就永久停了</span>
+        <div class="zhouli-swiper">
+          <div class="swiper" id="zhouliSwV1">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide"><img src="swiper-imgs/tiangong_1.jpg" alt="天宫空间站"><div class="zhouli-cap"><h3>天宫空间站</h3><p>v1 没写分页器 → 圆点整段缺失</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="复兴号动车组"><div class="zhouli-cap"><h3>复兴号动车组</h3><p>v1 漏 disableOnInteraction → 拖完就停</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"><div class="zhouli-cap"><h3>C919 大飞机</h3><p>试试拖一下再松手</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"><div class="zhouli-cap"><h3>奋斗者号</h3><p>停住不动了？这就是 v1 的缺陷</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"><div class="zhouli-cap"><h3>中国天眼 FAST</h3><p>cube 效果本身没问题</p></div></div>
+            </div>
           </div>
-          <div class="swiper-pagination" id="zhouliPagDemo1"></div>
+        </div>
+      </div>
+      <div class="zhouli-demo">
+        <span class="zhouli-demo-tag">✅ 第 2 轮 · v2 精确配置真实运行：圆点可点跳转；拖动后自动播放照常继续</span>
+        <div class="zhouli-swiper">
+          <div class="swiper" id="zhouliSwV2">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide"><img src="swiper-imgs/tiangong_1.jpg" alt="天宫空间站"><div class="zhouli-cap"><h3>天宫空间站</h3><p>v2 补齐分页器 → 点圆点可直接跳转</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="复兴号动车组"><div class="zhouli-cap"><h3>复兴号动车组</h3><p>disableOnInteraction: false 生效</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"><div class="zhouli-cap"><h3>C919 大飞机</h3><p>同样拖一下松手试试</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"><div class="zhouli-cap"><h3>奋斗者号</h3><p>它还会接着自动翻</p></div></div>
+              <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"><div class="zhouli-cap"><h3>中国天眼 FAST</h3><p>同样的需求，说清楚才能做对</p></div></div>
+            </div>
+            <div class="swiper-pagination" id="zhouliPagV2"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -218,13 +239,20 @@
 </div>
 
 <script>
-  // 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouliSwDemo1 —— 任务一效果展示：第 2 轮提示词产出的 v2 最终配置真实运行（loop + 3.2 秒自动播放且拖动不停 + 可点圆点 + cube 立方体）
-  var zhouliSwDemo1 = new Swiper("#zhouliSwDemo1", {
+  // 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouliSwV1 —— 任务一对比展示左侧：第 1 轮 v1 原始配置原样运行（无分页器；disableOnInteraction 缺省为 true，用户拖动后自动播放永久停止），与右侧 v2 对比体现提示词优化
+  var zhouliSwV1 = new Swiper("#zhouliSwV1", {
+    loop: true,
+    autoplay: { delay: 3200 },
+    effect: "cube"
+  });
+
+  // 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouliSwV2 —— 任务一对比展示右侧：第 2 轮 v2 精确配置原样运行（补齐 disableOnInteraction: false + 可点圆点分页器）
+  var zhouliSwV2 = new Swiper("#zhouliSwV2", {
     loop: true,
     effect: "cube",
     speed: 800,
     autoplay: { delay: 3200, disableOnInteraction: false },
-    pagination: { el: "#zhouliPagDemo1", clickable: true }
+    pagination: { el: "#zhouliPagV2", clickable: true }
   });
 
   // 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouliSwDemo2 —— 任务二效果展示：creative 电影墙（prev 退墙后 / next 放大进场），不设自动播放以便看清 prev/next 站位
