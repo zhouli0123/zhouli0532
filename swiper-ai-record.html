@@ -62,6 +62,12 @@
   .zhouli-kb-status{text-align:center;font-size:14px;color:#374151;background:#f8faff;border:1px solid #dbe4ff;border-radius:8px;padding:8px 14px;margin-top:12px}
   .zhouli-kb-status b{color:#e8890c;font-family:Consolas,monospace;font-size:16px}
 
+  /* 周丽 2026-11-11 GLM-5.3-Flash 功能：zhouli-thumbs —— 缩略图画廊专属样式（仿官方 demo 310：大图 + 下方 80px 缩略条，高亮橙色描边） */
+  .zhouli-thumbs-main .swiper-slide{height:260px}
+  .zhouli-thumbs-nav{margin-top:12px;padding-bottom:2px}
+  .zhouli-thumbs-nav .swiper-slide{height:80px;opacity:.4;cursor:pointer;border-radius:10px;overflow:hidden;transition:opacity .25s,outline-color .25s}
+  .zhouli-thumbs-nav .swiper-slide-thumb-active{opacity:1;outline:3px solid #e8890c;outline-offset:-3px}
+
   /* 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouli-qa —— 答辩备答问答块 */
   .zhouli-qa{background:#fffbea;border:1px solid #fde68a;border-radius:10px;padding:10px 16px;margin:8px 0;font-size:14px;color:#7c5e10}
   .zhouli-qa b{color:#b45309}
@@ -203,30 +209,57 @@
     <h3>① 第六件展品「爱达·魔都号」</h3>
     <p>已在演示四追加第 6 张 slide（完整三层结构），图注"爱达·魔都号——首艘国产大型邮轮 · 2024 年 1 月商业首航"，图片 <code class="zhouli-inline">swiper-imgs/aida_1.jpg</code> 为 AI 生成的横版 16:9 照片（金色黄昏海面上的白色巨轮，与其它展品风格统一）。</p>
     <p><b>与 AI 的关键对话（图片生成波折）</b>：先尝试 IDE 内置图像生成 → 需要授权未通过；再试图像 API → 返回 1001 认证错误；改用 Pollinations 免费 API → 连续 3 次输出与提示词无关的内容（园林/木塔/人像），确认其服务端当时不稳定；最终改用"本地图像方案"完成。</p>
-    <h3>② 课堂没讲过的能力：keyboard 键盘控制</h3>
-    <p><b>与 AI 的关键对话</b>：问 AI"Swiper 想用键盘方向键翻页怎么配"，AI 给出：</p>
-    <pre>keyboard: { enabled: true, onlyInViewport: true }</pre>
-    <p><b>追问：这两个参数各是什么作用？</b>AI 解释后我自己的话总结：</p>
+    <h3>② 课堂没讲过的能力：官方 demo 310「缩略图画廊联动（thumbs）」+ 配套键盘交互专项</h3>
+    <p><b>选型过程</b>：老师要求从官方 demo 目录里选一个课堂没学过的能力。我翻本地 <code class="zhouli-inline">swiper/demo/</code> 目录（50 个官方案例），排除了课上讲过的 220-fade、230-cube、240-coverflow、250-flip、255-cards、257-creative、260-keyboard、270-mousewheel、280-autoplay 等，最终选定 <b>310-thumbs-gallery-loop.html（缩略图画廊联动，thumbs 模块）</b>——大图和下方缩略图两台轮播双向联动：点缩略图切大图、翻大图缩略图自动高亮，课堂从没讲过。</p>
+    <p><b>与 AI 的关键对话</b>：把官方 demo 的 JS 原文拿给 AI，问"逐行解释每个参数为什么必须写"，AI 解释后我自己的话总结：</p>
+    <pre>// 官方 demo 310 的 JS（先建缩略图，主图要引用它）
+new Swiper(".mySwiper", {          // ← 缩略图轮播
+  loop: true,
+  spaceBetween: 10,
+  slidesPerView: 4,                // 一屏同时露出 4 张缩略图
+  freeMode: true,                  // 自由模式：缩略图条可拖到任意位置，不强制对齐
+  watchSlidesProgress: true,       // 监听每张缩略图的进度——thumbs 高亮联动的必备开关
+});
+new Swiper(".mySwiper2", {         // ← 大图轮播
+  loop: true,
+  spaceBetween: 10,
+  thumbs: { swiper: swiper }       // 对接键：把缩略图实例交给主图，实现双向联动
+});</pre>
     <ul>
-      <li><code class="zhouli-inline">enabled: true</code>——开启键盘控制，按 ←/→/↑/↓ 等方向键即可翻页；</li>
-      <li><code class="zhouli-inline">onlyInViewport: true</code>——<b>只有轮播滚动到可视区域内时</b>方向键才归它管，防止页面其它地方按方向键（比如滚动网页）被轮播"劫持"。</li>
+      <li><code class="zhouli-inline">watchSlidesProgress</code>——没有它 Swiper 不知道每张缩略图"走到哪了"，高亮会错位，是联动成立的开关；</li>
+      <li><code class="zhouli-inline">thumbs: { swiper }</code>——主图和缩略图"对接"的开关：翻大图时缩略图自动加 <code class="zhouli-inline">swiper-slide-thumb-active</code> 类高亮，点缩略图大图跟着切；</li>
+      <li><b>配套键盘交互</b>：在主图上加 <code class="zhouli-inline">keyboard: { enabled: true, onlyInViewport: true }</code>——按 ←/→ 翻大图，缩略图高亮同步移动，thumbs 联动与键盘控制两个能力一次验收。</li>
     </ul>
-    <h3>键盘交互专项 demo（新 demo：不自动播放，翻页全靠方向键，activeIndex 实时可见）</h3>
+    <h3>键盘交互专项 demo（缩略图画廊 + 方向键，realIndex 实时可见）</h3>
     <div class="zhouli-demo">
-      <span class="zhouli-demo-tag">⌨️ 键盘交互专项：先点一下下方轮播让它进入视口，再按 ←/→ 方向键翻页——不设自动播放，翻不翻全看键盘</span>
+      <span class="zhouli-demo-tag">⌨️ 键盘交互专项 · 缩略图画廊（官方 demo 310 仿写）：先点一下大图，再按 ←/→ 翻页——大图翻到哪张，下方缩略图高亮就跟到哪张；也可以直接点缩略图切大图</span>
       <div class="zhouli-swiper">
-        <div class="swiper" id="zhouliSwKb">
+        <div class="swiper zhouli-thumbs-main" id="zhouliThumbsMain">
           <div class="swiper-wrapper">
-            <div class="swiper-slide"><img src="swiper-imgs/tiangong_1.jpg" alt="天宫空间站"><div class="zhouli-cap"><h3>天宫空间站</h3><p>第 1 张 · 按 → 试试</p></div></div>
-            <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="复兴号动车组"><div class="zhouli-cap"><h3>复兴号动车组</h3><p>第 2 张 · 键盘翻到我了</p></div></div>
-            <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"><div class="zhouli-cap"><h3>C919 大飞机</h3><p>第 3 张 · 按 ← 可以翻回去</p></div></div>
-            <div class="swiper-slide"><img src="swiper-imgs/aida_1.jpg" alt="爱达·魔都号"><div class="zhouli-cap"><h3>爱达·魔都号</h3><p>第 4 张 · 循环模式继续按 → 会绕回第 1 张</p></div></div>
+            <div class="swiper-slide"><img src="swiper-imgs/tiangong_1.jpg" alt="天宫空间站"></div>
+            <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="复兴号动车组"></div>
+            <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"></div>
+            <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"></div>
+            <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"></div>
+            <div class="swiper-slide"><img src="swiper-imgs/aida_1.jpg" alt="爱达·魔都号"></div>
           </div>
-          <div class="swiper-pagination" id="zhouliPagKb"></div>
+          <div class="swiper-pagination" id="zhouliThumbsPag"></div>
+        </div>
+        <div class="swiper zhouli-thumbs-nav" id="zhouliThumbsNav" thumbsSlider="">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="swiper-imgs/tiangong_1.jpg" alt="缩略图 · 天宫空间站"></div>
+            <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="缩略图 · 复兴号动车组"></div>
+            <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="缩略图 · C919大飞机"></div>
+            <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="缩略图 · 奋斗者号"></div>
+            <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="缩略图 · 中国天眼"></div>
+            <div class="swiper-slide"><img src="swiper-imgs/aida_1.jpg" alt="缩略图 · 爱达·魔都号"></div>
+          </div>
         </div>
       </div>
-      <p class="zhouli-kb-status">当前 realIndex：<b id="zhouliKbIndex">0</b>　（每次按方向键触发 slideChange，这里实时变化——键盘交互生效的可见证据）</p>
+      <p class="zhouli-kb-status">当前 realIndex：<b id="zhouliKbIndex">0</b>　（每次按方向键触发 slideChange，读数实时变化——键盘交互生效的可见证据）</p>
     </div>
+    <div class="zhouli-verdict">点缩略图大图立即跟随切换；按 ←/→ 大图翻页、缩略图橙色描边高亮同步移动、realIndex 读数 +1/-1——thumbs 双向联动与键盘交互均生效。</div>
+    <div class="zhouli-qa"><b>我的实现和官方 demo 310 原版差在哪？</b>原版用 nature 风景图 + 左右箭头 navigation；我换成本课"大国重器"展品图，加了 pagination 可点圆点、keyboard 方向键配套交互和 realIndex 实时读数条，thumbs 核心参数（slidesPerView:4 / freeMode / watchSlidesProgress / thumbs.swiper）与官方一致。</div>
     <h3>亲自验证（下方六件展品轮播真实运行：点一下轮播再按方向键，或用鼠标滚轮试试翻页）</h3>
     <div class="zhouli-demo">
       <span class="zhouli-demo-tag">🎬 效果展示三 · 六件展品含「爱达·魔都号」+ keyboard 键盘翻页 + mousewheel 滚轮翻页（先点一下轮播再按 ←/→）</span>
@@ -245,7 +278,7 @@
       </div>
     </div>
     <div class="zhouli-verdict">滚动到可视区后按方向键 activeIndex 3→4 键盘翻页生效；连按两次仅 +1 是因为第二次按键落在 800ms 切换动画期间被动画队列吸收——如实记录；onlyInViewport 下页面其它位置按键不受影响。</div>
-    <div class="zhouli-qa"><b>答辩四连问 1 · 这段代码什么意思？</b>见上，keyboard 模块两参数分工明确。</div>
+    <div class="zhouli-qa"><b>答辩四连问 1 · 这段代码什么意思？</b>两个模块分工明确：thumbs 负责大图与缩略图双向联动（watchSlidesProgress 监听进度、thumbs.swiper 对接），keyboard 负责方向键翻页（onlyInViewport 防劫持）。</div>
     <div class="zhouli-qa"><b>2 · AI 第一次给的哪里不对、你改了什么？</b>AI 最初只给 <code class="zhouli-inline">keyboard: true</code>（简写形式），功能可用但缺 onlyInViewport 保护，长页面里会干扰正常滚动，因此补全为对象写法。</div>
     <div class="zhouli-qa"><b>3 · 新参数的作用？</b>onlyInViewport 限定轮播在可视区内才接管方向键。</div>
     <div class="zhouli-qa"><b>4 · 现场把 delay 改成指定值？</b>把 autoplay.delay 从 3200 改成如 1500，预期自动翻页间隔缩短到 1.5 秒，肉眼可感知翻页明显变快；disableOnInteraction: false 不受影响。</div>
@@ -303,16 +336,26 @@
     pagination: { el: "#zhouliPagDemo3", clickable: true }
   });
 
-  // 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouliSwKb —— 任务三键盘交互专项 demo：只配 keyboard（无自动播放、无滚轮），按 ←/→ 翻页；slideChange 事件把 realIndex 实时写回读数条，作为键盘交互生效的可见证据
-  var zhouliSwKb = new Swiper("#zhouliSwKb", {
+  // 周丽 2026-11-11 GLM-5.3-Flash 功能：zhouliThumbsNav —— 任务三键盘交互专项 demo 第一台：缩略图轮播（官方 demo 310 同款参数：一屏 4 张 + freeMode 自由拖动 + watchSlidesProgress 联动高亮开关），必须先于主图创建
+  var zhouliThumbsNav = new Swiper("#zhouliThumbsNav", {
     loop: true,
+    spaceBetween: 10,
+    slidesPerView: 4,
+    freeMode: true,
+    watchSlidesProgress: true
+  });
+  // 周丽 2026-11-11 GLM-5.3-Flash 功能：zhouliThumbsMain —— 第二台：大图轮播，thumbs 挂上缩略图实现双向联动 + keyboard 方向键翻页（课堂没讲过的 thumbs 配套键盘交互专项）
+  var zhouliThumbsMain = new Swiper("#zhouliThumbsMain", {
+    loop: true,
+    spaceBetween: 10,
     speed: 800,
     keyboard: { enabled: true, onlyInViewport: true },
-    pagination: { el: "#zhouliPagKb", clickable: true }
+    thumbs: { swiper: zhouliThumbsNav },
+    pagination: { el: "#zhouliThumbsPag", clickable: true }
   });
-  // 周丽 2026-11-09 GLM-5.3-Flash 功能：zhouliKbIndex 回显 —— 监听 slideChange，翻一次页读数 +1/-1（loop 模式用 realIndex 取真实序号）
-  zhouliSwKb.on("slideChange", function () {
-    document.getElementById("zhouliKbIndex").textContent = zhouliSwKb.realIndex;
+  // 周丽 2026-11-11 GLM-5.3-Flash 功能：zhouliKbIndex 回显 —— 监听大图 slideChange，把 realIndex 实时写回读数条，作为键盘交互生效的可见证据
+  zhouliThumbsMain.on("slideChange", function () {
+    document.getElementById("zhouliKbIndex").textContent = zhouliThumbsMain.realIndex;
   });
 </script>
 </body>
