@@ -72,7 +72,7 @@
   .zl_zoomInfo{position:absolute;left:10px;bottom:10px;background:rgba(15,23,42,.8);color:#7dd3fc;font-size:12.5px;font-family:Consolas,monospace;border-radius:8px;padding:4px 12px;pointer-events:none}
 
   /* 任务四：摇一摇 */
-  .zl_shakeBox{border-radius:16px;padding:26px 20px;text-align:center;background:linear-gradient(135deg,#7c2d92,#db2777);color:#fff}
+  .zl_shakeBox{border-radius:16px;padding:26px 20px;text-align:center;background:linear-gradient(135deg,#7c2d92,#db2777);color:#fff;transition:transform .08s linear}
   .zl_shakeResult{min-height:96px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:15px}
   .zl_shakeResult h3{font-size:26px;letter-spacing:2px}
   .zl_shakeResult.zl_pop{animation:zl_pop .45s ease}
@@ -168,7 +168,7 @@
       </div>
       <div class="zl_motionLog" id="zl_motionLog"></div>
     </div>
-    <div class="zl_note"><b>为什么必须做降级</b>：devicemotion 是设备能力事件，电脑浏览器/模拟器没有传感器、事件永远不来，不做降级页面就一片死寂；iOS 13+ 还要求用户主动授权（HTTPS）。所以要有授权按钮入口 + 点击抽签兜底，传感器功能必须真机测试 + 降级两手抓。原理：<code>accelerationIncludingGravity</code> 含重力（静止平放 ≈9.8），<code>acceleration</code> 不含重力（静止时≈0）——摇动检测必须用含重力的那个，摇动时数值剧烈波动，超过阈值 18 判定，冷却 1.5 秒防一次摇动触发十几次。</div>
+    <div class="zl_note"><b>为什么必须做降级</b>：devicemotion 是设备能力事件，电脑浏览器/模拟器没有传感器、事件永远不来，不做降级页面就一片死寂；iOS 13+ 还要求用户主动授权（HTTPS）。所以要有授权按钮入口 + 点击抽签兜底，传感器功能必须真机测试 + 降级两手抓。原理：<code>accelerationIncludingGravity</code> 含重力（静止平放 ≈9.8），<code>acceleration</code> 不含重力（静止时≈0）——摇动检测必须用含重力的那个，摇动时数值剧烈波动，超过阈值 18 判定，冷却 1.5 秒防一次摇动触发十几次。反馈分两层：卡片会跟随 x 轴加速度左右摆动（±8° 内），用力快摇让"最大"值冲过 18 才抽菜转圈——轻摇只有摆动反馈，这正好演示了"阈值判定"的存在。</div>
   </div>
 
   <div class="zl_back"><a href="index.html">返回首页</a></div>
@@ -355,9 +355,16 @@ function zlInitZoom() {
   var zl_pinchStartDist = 0, zl_pinchStartScale = 1, zl_pinchStartTx = 0, zl_pinchStartTy = 0, zl_pinchMid = null;
   var zl_dragStartX = 0, zl_dragStartY = 0, zl_dragStartTx = 0, zl_dragStartTy = 0;
   var zl_lastTap = 0, zl_pinch = false;
+  var zl_rot = 0, zl_pinchStartAngle = 0, zl_pinchStartRot = 0;   // 旋转状态与双指起始角度
 
   // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlDist —— 两指直线距离（Math.hypot 即勾股定理）
   function zlDist(t1, t2) { return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY); }
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlAngle —— 两指连线角度（Math.atan2 对边/邻边求弧度再转角度制），双指旋转的基准
+  function zlAngle(t1, t2) { return Math.atan2(t2.clientY - t1.clientY, t2.clientX - t1.clientX) * 180 / Math.PI; }
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlNorm —— 把角度差归一化到 (-180,180]，防止跨 ±180° 时图片猛转一圈
+  function zlNorm(d) { while (d > 180) d -= 360; while (d <= -180) d += 360; return d; }
 
   // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlMid —— 两指中点（缩放基准点）
   function zlMid(t1, t2) { return { x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2 }; }
@@ -372,8 +379,8 @@ function zlInitZoom() {
       zl_tx = Math.max(minX, Math.min(0, zl_tx));
       zl_ty = Math.max(minY, Math.min(0, zl_ty));
     }
-    img.style.transform = "translate(" + zl_tx + "px," + zl_ty + "px) scale(" + zl_scale + ")";
-    info.textContent = "缩放 " + zl_scale.toFixed(2) + "x";
+    img.style.transform = "translate(" + zl_tx + "px," + zl_ty + "px) rotate(" + zl_rot + "deg) scale(" + zl_scale + ")";
+    info.textContent = "缩放 " + zl_scale.toFixed(2) + "x" + (zl_rot !== 0 ? " · 旋转 " + Math.round(zl_rot) + "°" : "");
   }
 
   // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlAnimate —— 双击切换时临时加 0.25s 过渡类，之后移除（拖动不带动画）
@@ -385,7 +392,7 @@ function zlInitZoom() {
   // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlToggle —— 双击：1x ↔ 2x 切换（中心缩放，tx/ty 归零即居中）
   function zlToggle() {
     zlAnimate();
-    if (zl_scale > 1) { zl_scale = 1; zl_tx = 0; zl_ty = 0; }
+    if (zl_scale > 1 || zl_rot !== 0) { zl_scale = 1; zl_tx = 0; zl_ty = 0; zl_rot = 0; }   // 双击复位：1x + 居中 + 摆正
     else { zl_scale = 2; }
     zlClamp();
   }
@@ -399,6 +406,8 @@ function zlInitZoom() {
       zl_pinchStartDist = zlDist(e.touches[0], e.touches[1]);
       zl_pinchStartScale = zl_scale;
       zl_pinchStartTx = zl_tx; zl_pinchStartTy = zl_ty;
+      zl_pinchStartAngle = zlAngle(e.touches[0], e.touches[1]);   // 双指旋转：定格起始角度
+      zl_pinchStartRot = zl_rot;
       zl_pinchMid = zlMid(e.touches[0], e.touches[1]);
       var rect = stage.getBoundingClientRect();
       zl_pinchMid.x -= rect.left; zl_pinchMid.y -= rect.top;   // 转成容器内坐标，与 transform 同一坐标系
@@ -423,6 +432,8 @@ function zlInitZoom() {
       zl_tx = zl_pinchMid.x - (zl_pinchMid.x - zl_pinchStartTx) * (s / zl_pinchStartScale);
       zl_ty = zl_pinchMid.y - (zl_pinchMid.y - zl_pinchStartTy) * (s / zl_pinchStartScale);
       zl_scale = s;
+      // 加分项·双指旋转：当前两指角度 - 起始角度（归一化防跳变），叠加到已累计的旋转角上
+      zl_rot = zl_pinchStartRot + zlNorm(zlAngle(e.touches[0], e.touches[1]) - zl_pinchStartAngle);
       zlClamp();
     } else if (zl_scale > 1 && !zl_pinch) {
       // 单指拖动（只在放大后允许）
@@ -460,6 +471,7 @@ function zlInitShake() {
   var log = document.getElementById("zl_motionLog");
   var permBtn = document.getElementById("zl_permBtn");
   var fallbackBtn = document.getElementById("zl_fallbackBtn");
+  var box = document.querySelector(".zl_shakeBox");   // 摇动反馈：整卡跟随加速度轻微摆动
   var DISHES = ["宫保鸡丁", "佛跳墙", "东坡肉", "麻婆豆腐", "糖醋排骨", "水煮鱼", "回锅肉", "白切鸡"];
   var zl_lastShake = 0, zl_gotMotion = false, zl_shakeCount = 0, zl_maxMag = 0;
 
@@ -490,8 +502,10 @@ function zlInitShake() {
     var mag = Math.hypot(a.x || 0, a.y || 0, a.z || 0);
     if (mag > zl_maxMag) zl_maxMag = mag;      // 记录历史最大加速度：区分"真传感器（含重力≈9.8+）"与"空事件（全 0）"
     var now = Date.now();
+    box.style.transform = "rotate(" + Math.max(-8, Math.min(8, (a.x || 0) * 0.9)) + "deg)";  // 摇动反馈：x 轴加速度让卡片左右摆（钳 ±8°），不到阈值也能看到页面"活了"
     log.textContent = "当前 " + mag.toFixed(1) + " ｜ 最大 " + zl_maxMag.toFixed(1) + "（阈值 18）　摇动次数：" + zl_shakeCount;
     if (mag > 18 && now - zl_lastShake > 1500) {   // 阈值 18 + 冷却 1.5s：一次摇动只触发一次
+      box.style.transform = "rotate(0deg)";        // 触发抽菜时摆正卡片，让转盘动画干净呈现
       zl_lastShake = now;
       zl_shakeCount++;
       zlDrawDish();
