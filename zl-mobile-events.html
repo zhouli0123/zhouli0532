@@ -159,7 +159,7 @@
       </div>
       <div class="zl_motionLog" id="zl_motionLog"></div>
     </div>
-    <div class="zl_note"><b>为什么必须做降级</b>：devicemotion 是设备能力事件，电脑浏览器/模拟器没有传感器、事件永远不来，不做降级页面就一片死寂；iOS 13+ 还要求用户主动授权（HTTPS）。所以要有授权按钮入口 + 点击抽签兜底，传感器功能必须真机测试 + 降级两手抓。原理：<code>accelerationIncludingGravity</code> 含重力（静止平放 ≈9.8），<code>acceleration</code> 不含重力（静止时≈0）——摇动检测必须用含重力的那个，摇动时数值剧烈波动，超过阈值 18 判定，冷却 1.5 秒防一次摇动触发十几次。</div>
+    <div class="zl_note"><b>为什么必须做降级</b>：devicemotion 是设备能力事件，电脑浏览器/模拟器没有传感器、事件永远不来，不做降级页面就一片死寂；iOS 13+ 还要求用户主动授权（HTTPS）。所以要有授权按钮入口 + 点击抽签兜底，传感器功能必须真机测试 + 降级两手抓。原理：<code>accelerationIncludingGravity</code> 含重力（静止平放 ≈9.8），<code>acceleration</code> 不含重力（静止时≈0）——摇动检测必须用含重力的那个，摇动时数值剧烈波动，超过阈值 14 判定（阈值定得贴近静止值 9.8 一点，轻摇也能触发；冷却 1.5 秒防一次摇动触发十几次）。</div>
   </div>
 
   <div class="zl_back"><a href="index.html">返回首页</a></div>
@@ -476,13 +476,13 @@ function zlInitShake() {
 
   window.addEventListener("devicemotion", function (e) {
     zl_gotMotion = true;
-    var a = e.accelerationIncludingGravity;    // 含重力的加速度：静止 ≈9.8，摇动时剧烈波动
+    var a = e.accelerationIncludingGravity || e.acceleration;  // 含重力优先；个别设备只给不含重力的字段
     if (!a) return;
     var mag = Math.hypot(a.x || 0, a.y || 0, a.z || 0);
-    if (mag > zl_maxMag) zl_maxMag = mag;      // 记录历史最大加速度：区分"真传感器（含重力≈9.8+）"与"空事件（全 0）"
+    if (mag > zl_maxMag) zl_maxMag = mag;      // 记录历史最大加速度：区分"真传感器"与"空事件"，也方便现场调阈值
     var now = Date.now();
-    log.textContent = "合成加速度：" + mag.toFixed(1) + "（阈值 18）　摇动次数：" + zl_shakeCount;
-    if (mag > 18 && now - zl_lastShake > 1500) {   // 阈值 18 + 冷却 1.5s：一次摇动只触发一次
+    log.textContent = "当前 " + mag.toFixed(1) + " ｜ 最大 " + zl_maxMag.toFixed(1) + "（阈值 14）　摇动次数：" + zl_shakeCount;
+    if (mag > 14 && now - zl_lastShake > 1500) {   // 阈值 14（静止≈9.8，轻摇就能超过）+ 冷却 1.5s：一次摇动只触发一次
       zl_lastShake = now;
       zl_shakeCount++;
       zlDrawDish();
@@ -493,7 +493,7 @@ function zlInitShake() {
   // （桌面 Chrome 会发"空事件"）——都视为无传感器，显示降级按钮，不报错不白屏
   setTimeout(function () {
     if (!zl_gotMotion || zl_maxMag < 1) {
-      text.textContent = "当前设备不支持动作传感器，请用手机打开，或点下方按钮抽一次。";
+      text.textContent = "当前设备不支持动作传感器（电脑没有加速度计；手机浏览器对 HTTP 页面也会禁用传感器，摇一摇必须 HTTPS 页面）。请点下方按钮抽一次。";
       fallbackBtn.style.display = "";
     }
   }, 2000);
