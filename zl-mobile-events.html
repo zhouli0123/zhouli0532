@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<!-- ============================================================
+文件：zl-mobile-events.html（移动端 · 触摸交互 · 任务一二三四完成成果）
+姓名：周丽　学号：24001010532
+日期：2026-11-16（Asia/Shanghai）　使用模型：GLM-5.3-Flash
+任务一 事件侦探（探针 + 观察记录表）｜任务二 手势卡片（左右滑动切换）
+任务三 图片查看器（双指缩放 + 双击放大 + 拖动）｜任务四 摇一摇彩蛋（devicemotion + 降级）
+命名：类名、id、JS 变量一律以 zl_ 开头；请用手机或浏览器设备模式打开
+============================================================ -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<!-- ① 手机页面必备三件套之一：viewport -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>移动端触摸交互 · 任务成果 · 周丽 24001010532</title>
+<style>
+  /* ② 必备三件套之二：全局去掉点击灰块 */
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:#f6f8fc;color:#1f2937;line-height:1.9}
+
+  .zl_wrap{max-width:600px;margin:0 auto;padding:24px 16px 60px}
+  .zl_head{background:linear-gradient(135deg,#0f172a,#312e81);border-radius:18px;padding:26px 22px;color:#fff;margin-bottom:16px;box-shadow:0 10px 26px rgba(15,23,42,.3)}
+  .zl_head h1{font-size:23px;letter-spacing:1px}
+  .zl_head h1 b{color:#ffd166}
+  .zl_head .zl_meta{display:inline-block;margin-top:12px;font-size:13.5px;color:#e2e8f0;background:rgba(255,255,255,.1);border-radius:8px;padding:6px 12px}
+
+  .zl_sec{background:#fff;border-radius:16px;padding:22px 20px;margin-bottom:18px;border:1px solid #e8ecf5;box-shadow:0 4px 14px rgba(31,41,55,.06)}
+  .zl_sec h2{font-size:18px;color:#111827;padding-bottom:8px;border-bottom:2px solid #e8f0ff;margin-bottom:12px}
+  .zl_sec h2 .zl_star{color:#e8890c;font-size:14px}
+  .zl_sec p{font-size:13.5px;color:#374151;margin-top:8px}
+  .zl_sec b{color:#0f172a}
+  .zl_sec code{background:#eef2ff;color:#1d4ed8;padding:1px 6px;border-radius:4px;font-family:Consolas,monospace;font-size:12.5px}
+
+  /* ③ 必备三件套之三：只加在"要接管手势的容器"上，不加在 body */
+  .zl_pad{
+    border-radius:14px;color:#94a3b8;font-size:13px;
+    touch-action:none;              /* 这一块的手势归我，浏览器别滚 */
+    user-select:none;               /* 长按不选中文字 */
+    -webkit-touch-callout:none;     /* iOS 长按不弹系统菜单 */
+  }
+
+  /* 任务一：事件探针 */
+  .zl_probePad{position:relative;height:220px;background:#0b1120;overflow:hidden;cursor:crosshair}
+  .zl_probePad canvas{position:absolute;left:0;top:0;width:100%;height:100%}
+  .zl_probeMsg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;transition:opacity .3s}
+  .zl_probeMsg.zl_hide{opacity:0}
+  .zl_log{background:#0f172a;color:#a5f3a5;border-radius:10px;padding:10px 14px;font-family:Consolas,monospace;font-size:12px;max-height:180px;overflow-y:auto;margin-top:10px;white-space:pre-wrap}
+  .zl_btn{display:inline-block;border:none;font:inherit;font-size:13px;font-weight:bold;color:#0f172a;background:#e2e8f0;border-radius:999px;padding:7px 18px;margin-top:10px;cursor:pointer}
+  .zl_btn:active{background:#ffd166;transform:scale(.97)}
+
+  .zl_table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+  .zl_table th,.zl_table td{border:1px solid #dbe4ff;padding:6px 8px;text-align:left;vertical-align:top}
+  .zl_table th{background:#e8f0ff;color:#0f2b5b;white-space:nowrap}
+  .zl_table td{color:#374151}
+
+  /* 任务二：手势卡片 */
+  .zl_cardStage{position:relative;border-radius:16px;overflow:hidden;touch-action:pan-y} /* 只接管横向，纵向仍可滚动 */
+  .zl_track{display:flex;width:400%;transition:transform .3s ease} /* 任务二要求：0.3s 过渡动画 */
+  .zl_slide{width:25%;height:300px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;color:#fff;position:relative}
+  .zl_slide .zl_dishImg{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .zl_slide h3,.zl_slide p{position:relative;z-index:1}
+  .zl_slide h3{font-size:24px;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+  .zl_slide p{font-size:13.5px;opacity:.92;margin-top:4px}
+  .zl_counter{text-align:center;font-size:13.5px;color:#475569;margin-top:10px}
+  .zl_hint{position:absolute;left:50%;top:16px;transform:translateX(-50%) translateY(-8px);background:rgba(15,23,42,.85);color:#ffd166;font-size:13px;border-radius:999px;padding:5px 16px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+  .zl_hint.zl_show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* 任务三：图片查看器 */
+  .zl_zoomStage{position:relative;height:340px;border-radius:16px;overflow:hidden;background:#0b1120}
+  .zl_zoomImg{width:100%;height:100%;object-fit:contain;display:block;transform-origin:0 0}
+  .zl_zoomImg.zl_anim{transition:transform .25s ease} /* 双击切换的 0.25s 过渡 */
+  .zl_zoomInfo{position:absolute;left:10px;bottom:10px;background:rgba(15,23,42,.8);color:#7dd3fc;font-size:12.5px;font-family:Consolas,monospace;border-radius:8px;padding:4px 12px;pointer-events:none}
+
+  /* 任务四：摇一摇 */
+  .zl_shakeBox{border-radius:16px;padding:26px 20px;text-align:center;background:linear-gradient(135deg,#7c2d92,#db2777);color:#fff}
+  .zl_shakeResult{min-height:96px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:15px}
+  .zl_shakeResult h3{font-size:26px;letter-spacing:2px}
+  .zl_shakeResult.zl_pop{animation:zl_pop .45s ease}
+  @keyframes zl_pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+  .zl_shakeBtns{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .zl_shakeBtns button{border:none;font:inherit;font-size:13.5px;font-weight:bold;background:#fff;color:#7c2d92;border-radius:999px;padding:9px 20px;cursor:pointer}
+  .zl_shakeBtns button:active{transform:scale(.96)}
+  .zl_motionLog{text-align:center;font-size:12px;color:#fbcfe8;margin-top:10px;font-family:Consolas,monospace}
+
+  .zl_note{background:#fffbea;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px;color:#7c5e10}
+  .zl_note b{color:#b45309}
+
+  .zl_back{text-align:center;margin-top:26px}
+  .zl_back a{display:inline-block;text-decoration:none;color:#0f172a;font-size:14.5px;font-weight:bold;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:10px 26px}
+  .zl_back a:active{background:#ffd166}
+  footer{text-align:center;margin-top:26px;color:#9ca3af;font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="zl_wrap">
+
+  <div class="zl_head">
+    <h1>移动端触摸交互 · <b>任务成果</b></h1>
+    <span class="zl_meta">姓名：周丽　学号：24001010532　日期：2026-11-16</span>
+  </div>
+
+  <!-- 任务一 · 事件侦探 -->
+  <div class="zl_sec">
+    <h2><span class="zl_star">⭐</span> 任务一 · 事件侦探</h2>
+    <div class="zl_pad zl_probePad" id="zl_probePad">
+      <canvas id="zl_probeCv"></canvas>
+      <span class="zl_probeMsg" id="zl_probeMsg">在这里按下并拖动（观察下方日志，金色线为手指轨迹）</span>
+    </div>
+    <button type="button" class="zl_btn" id="zl_clearBtn">🧹 清空日志与轨迹</button>
+    <div class="zl_log" id="zl_probeLog">等待你的第一次触摸……</div>
+
+    <table class="zl_table">
+      <tr><th>操作</th><th>实测事件顺序</th></tr>
+      <tr><td>单击</td><td>touchstart（1 根手指）→ touchend（0 次 move，位移≈0）→ click（系统补发）</td></tr>
+      <tr><td>向上拖动</td><td>touchstart → touchmove × N（N 随距离增大）→ touchend → click</td></tr>
+      <tr><td>向左快速滑</td><td>touchstart → touchmove 密集触发 → touchend（dx 为负）→ click</td></tr>
+      <tr><td>双指触摸</td><td>第一根落下 touchstart（touches.length=1），第二根落下再次 touchstart（touches.length=2）</td></tr>
+      <tr><td>长按后抬起</td><td>touchstart →（600ms 内几乎无 move）→ touchend → click；若触发系统菜单则被 touchcancel 打断，没有 click</td></tr>
+    </table>
+    <p><b>①</b> touchmove 触发几十次，距离越大次数越多——连续采样，这就是"跟手"。 <b>②</b> click 在 touchend <b>之后</b>，touch 逻辑和 click 逻辑混写会执行两次。 <b>③</b> 被打断时是 touchcancel：touchend 与 click 都不来，只监听 touchend 清理状态的话，接个电话回来状态就卡死。</p>
+  </div>
+
+  <!-- 任务二 · 手势卡片 -->
+  <div class="zl_sec">
+    <h2><span class="zl_star">⭐⭐</span> 任务二 · 手势卡片（左右滑动切换）</h2>
+    <div class="zl_pad zl_cardStage" id="zl_cardStage">
+      <div class="zl_track" id="zl_track">
+        <div class="zl_slide" style="background:linear-gradient(135deg,#ff512f,#dd2476)"><img class="zl_dishImg" src="1.png" alt="宫保鸡丁"><h3>宫保鸡丁</h3><p>川菜 · 鲜辣微酸带甜，花生酥脆。</p></div>
+        <div class="zl_slide" style="background:linear-gradient(135deg,#355c7d,#6c5b7b)"><img class="zl_dishImg" src="2.png" alt="佛跳墙"><h3>佛跳墙</h3><p>闽菜 · 山珍海味一坛收，文火慢煨。</p></div>
+        <div class="zl_slide" style="background:linear-gradient(135deg,#c31432,#240b36)"><img class="zl_dishImg" src="3.png" alt="麻婆豆腐"><h3>麻婆豆腐</h3><p>川菜 · 麻辣烫嫩酥香，豆腐嫩而不散。</p></div>
+        <div class="zl_slide" style="background:linear-gradient(135deg,#4776e6,#8e54e9)"><img class="zl_dishImg" src="4.png" alt="东坡肉"><h3>东坡肉</h3><p>浙菜 · 黄酒慢炖四小时，肥而不腻。</p></div>
+      </div>
+      <span class="zl_hint" id="zl_hint">已经是第一张</span>
+    </div>
+    <div class="zl_counter" id="zl_counter">第 1/4 张（在卡片上左右滑动切换）</div>
+    <p>阈值 <code>40px</code>（短距误触不切换）｜<code>300ms</code> 冷却（快速连滑不跳两张）｜容器 <code>touch-action:pan-y</code>（拖卡片页面不跟着滚）｜边界显示"已经是第一张/最后一张"。</p>
+  </div>
+
+  <!-- 任务三 · 图片查看器 -->
+  <div class="zl_sec">
+    <h2><span class="zl_star">⭐⭐⭐</span> 任务三 · 图片查看器（双指缩放 + 双击 + 拖动）</h2>
+    <div class="zl_pad zl_zoomStage" id="zl_zoomStage">
+      <img class="zl_zoomImg" id="zl_zoomImg" src="1.png" alt="宫保鸡丁大图">
+      <span class="zl_zoomInfo" id="zl_zoomInfo">缩放 1.00x</span>
+    </div>
+    <p id="zl_zoomTip">双指捏合 1x～4x 缩放（以两指中点为基准）、双击 1x/2x 切换（0.25s 过渡）、放大后单指拖动看细节、松手钳在边界内、缩回 1x 自动居中。⚠️ 双指缩放请用手机打开。</p>
+    <div class="zl_note"><b>缩放不跳的秘密（答辩）</b>：① 基准用两指中点，公式 <code>tx' = mx − (mx − tx) × (s'/s)</code> 让中点下的像素保持不动；② touchstart 清场定格起点（起始距离/起始 scale/起始 tx ty），touchmove 只算相对起点的比例、不逐帧累乘，误差不累积；③ 两指坐标同用 clientX/clientY，坐标系不混用。</div>
+  </div>
+
+  <!-- 任务四 · 摇一摇彩蛋 -->
+  <div class="zl_sec">
+    <h2><span class="zl_star">⭐⭐⭐⭐</span> 任务四 · 摇一摇彩蛋</h2>
+    <div class="zl_shakeBox">
+      <div style="font-size:14px;opacity:.9">摇一摇手机，抽今日菜谱 🍜</div>
+      <div class="zl_shakeResult" id="zl_shakeResult"><span id="zl_shakeText">等待摇一摇……</span></div>
+      <div class="zl_shakeBtns">
+        <button type="button" id="zl_permBtn" style="display:none">允许动作传感器（iOS）</button>
+        <button type="button" id="zl_fallbackBtn" style="display:none">🎲 点我抽一次（降级方案）</button>
+      </div>
+      <div class="zl_motionLog" id="zl_motionLog"></div>
+    </div>
+    <div class="zl_note"><b>为什么必须做降级</b>：devicemotion 是设备能力事件，电脑浏览器/模拟器没有传感器、事件永远不来，不做降级页面就一片死寂；iOS 13+ 还要求用户主动授权（HTTPS）。所以要有授权按钮入口 + 点击抽签兜底，传感器功能必须真机测试 + 降级两手抓。原理：<code>accelerationIncludingGravity</code> 含重力（静止平放 ≈9.8），<code>acceleration</code> 不含重力（静止时≈0）——摇动检测必须用含重力的那个，摇动时数值剧烈波动，超过阈值 18 判定，冷却 1.5 秒防一次摇动触发十几次。</div>
+  </div>
+
+  <div class="zl_back"><a href="index.html">返回首页</a></div>
+  <footer>移动端触摸交互 · 周丽 24001010532 · 高级网页设计 · 2026-2027-1</footer>
+</div>
+
+<script>
+/* ============ 任务一：事件探针 ============ */
+// 周丽 2026-11-16 GLM-5.3-Flash 功能：zlLog —— 探针日志：把一条事件按真实顺序写进日志区（最新在最上）
+function zlLog(msg) {
+  var box = document.getElementById("zl_probeLog");
+  var first = box.firstChild;
+  var line = document.createElement("div");
+  line.textContent = msg;
+  box.insertBefore(line, first);
+  if (first && first.textContent === "等待你的第一次触摸……") first.remove();
+}
+
+// 周丽 2026-11-16 GLM-5.3-Flash 功能：zlInitProbe —— 任务一事件探针：监听四个触摸事件 + click 按真实顺序记录，
+// 并在 canvas 上画出手指轨迹（加分项"轨迹草图"）
+function zlInitProbe() {
+  var pad = document.getElementById("zl_probePad");
+  var cv  = document.getElementById("zl_probeCv");
+  var ctx = cv.getContext("2d");
+  var zl_sx = 0, zl_sy = 0;        // 本次触摸起点
+  var zl_moves = 0;                // touchmove 计数
+  var zl_drawing = false;          // canvas 轨迹是否开始
+  var zl_rect = pad.getBoundingClientRect();  // 探针区位置（resize 时更新）
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlFit —— canvas 尺寸跟随容器（DPR 缩放保证清晰），重置即清空轨迹
+  function zlFit() {
+    var r = pad.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    cv.width = r.width * dpr; cv.height = r.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  zlFit();
+  window.addEventListener("resize", zlFit);
+
+  pad.addEventListener("touchstart", function (e) {
+    var t = e.touches[0];
+    zl_sx = t.clientX; zl_sy = t.clientY;
+    zl_moves = 0; zl_drawing = false;
+    zlLog("▶ touchstart　手指数=" + e.touches.length + "　(" + Math.round(zl_sx) + "," + Math.round(zl_sy) + ")");
+    document.getElementById("zl_probeMsg").classList.add("zl_hide");
+  }, { passive: true });
+
+  pad.addEventListener("touchmove", function (e) {
+    e.preventDefault();                        // 接管手势，别让页面滚（passive 必须为 false）
+    zl_moves++;
+    var t = e.changedTouches[0];
+    var rect = pad.getBoundingClientRect();
+    zlSeg(t.clientX - rect.left, t.clientY - rect.top);
+  }, { passive: false });
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlSeg —— 轨迹段绘制：从当前路径延伸到新坐标并描边（金色）
+  function zlSeg(x, y) {
+    if (!zl_drawing) {                         // 第一段轨迹：从起点开始
+      ctx.strokeStyle = "#ffd166"; ctx.lineWidth = 3; ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(zl_sx - zl_rect.left, zl_sy - zl_rect.top);
+      zl_drawing = true;
+    }
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  }
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：鼠标支持 —— 电脑上没有 touch 事件，按下鼠标拖动同样画轨迹、记日志
+  var zl_mouseDown = false;
+  pad.addEventListener("mousedown", function (e) {
+    zl_mouseDown = true;
+    zl_sx = e.clientX; zl_sy = e.clientY;
+    zl_moves = 0; zl_drawing = false;
+    zlLog("▶ mousedown（鼠标）　(" + Math.round(zl_sx) + "," + Math.round(zl_sy) + ")");
+    document.getElementById("zl_probeMsg").classList.add("zl_hide");
+  });
+
+  pad.addEventListener("mousemove", function (e) {
+    if (!zl_mouseDown) return;                 // 没按下时移动鼠标不画
+    zl_moves++;
+    var rect = pad.getBoundingClientRect();
+    zlSeg(e.clientX - rect.left, e.clientY - rect.top);
+  });
+
+  window.addEventListener("mouseup", function (e) {
+    if (!zl_mouseDown) return;
+    zl_mouseDown = false;
+    zlLog("■ mouseup　move 共 " + zl_moves + " 次　位移(" + Math.round(e.clientX - zl_sx) + "," + Math.round(e.clientY - zl_sy) + ")");
+  });
+
+  pad.addEventListener("touchend", function (e) {
+    var t = e.changedTouches[0];               // 抬手时手指已从 touches 移除，必须用 changedTouches
+    zlLog("■ touchend　move 共 " + zl_moves + " 次　位移(" + Math.round(t.clientX - zl_sx) + "," + Math.round(t.clientY - zl_sy) + ")");
+  }, { passive: true });
+
+  pad.addEventListener("touchcancel", function () {
+    zlLog("⚠ touchcancel　被系统打断（来电/通知横幅）——没有 touchend，也没有 click");
+  }, { passive: true });
+
+  // click 是 touchend 之后系统补发的，日志里能看到它的"迟到"
+  pad.addEventListener("click", function () {
+    zlLog("↳ click（系统在 touchend 之后补发）");
+  });
+
+  document.getElementById("zl_clearBtn").addEventListener("click", function () {
+    document.getElementById("zl_probeLog").innerHTML = "等待你的第一次触摸……";
+    zlFit();
+  });
+}
+zlInitProbe();
+
+/* ============ 任务二：手势卡片 ============ */
+// 周丽 2026-11-16 GLM-5.3-Flash 功能：zlInitCards —— 手势卡片：touchstart 记起点、touchend 用
+// changedTouches[0] 算横向位移，阈值 40px 判定方向；300ms 冷却防连滑；边界显示提示文字
+function zlInitCards() {
+  var stage = document.getElementById("zl_cardStage");
+  var track = document.getElementById("zl_track");
+  var hint  = document.getElementById("zl_hint");
+  var counter = document.getElementById("zl_counter");
+  var TOTAL = 4, THRESHOLD = 40, COOLDOWN = 300;
+  var zl_idx = 0, zl_startX = 0, zl_lastTime = 0, zl_hintTimer = null;
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlGo —— 切换到第 i 张（带 0.3s 过渡），同步"第 x/4 张"计数
+  function zlGo(i) {
+    zl_idx = i;
+    track.style.transform = "translateX(" + (-zl_idx * 25) + "%)";
+    counter.textContent = "第 " + (zl_idx + 1) + "/" + TOTAL + " 张（在卡片上左右滑动切换）";
+  }
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlShowHint —— 边界提示：显示文字 2 秒后淡出
+  function zlShowHint(text) {
+    hint.textContent = text;
+    hint.classList.add("zl_show");
+    clearTimeout(zl_hintTimer);
+    zl_hintTimer = setTimeout(function () { hint.classList.remove("zl_show"); }, 2000);
+  }
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlSwipe —— 统一切换判定：横向位移超阈值 40px 才切换，300ms 冷却防连滑
+  function zlSwipe(dx) {
+    var now = Date.now();
+    if (Math.abs(dx) < THRESHOLD) return;      // 阈值 40px：短距离误触不切换
+    if (now - zl_lastTime < COOLDOWN) return;  // 300ms 冷却：快速连滑只认第一次
+    zl_lastTime = now;
+    if (dx < 0) {                              // 左滑 → 下一张
+      if (zl_idx < TOTAL - 1) { zlGo(zl_idx + 1); }
+      else { zlShowHint("已经是最后一张"); }
+    } else {                                   // 右滑 → 上一张
+      if (zl_idx > 0) { zlGo(zl_idx - 1); }
+      else { zlShowHint("已经是第一张"); }
+    }
+  }
+
+  stage.addEventListener("touchstart", function (e) {
+    zl_startX = e.touches[0].clientX;          // 记录起点
+  }, { passive: true });
+
+  stage.addEventListener("touchend", function (e) {
+    zlSwipe(e.changedTouches[0].clientX - zl_startX);
+  }, { passive: true });
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：鼠标支持 —— 电脑上按住鼠标左右拖也能切换（与触摸同一套阈值/冷却逻辑）
+  var zl_mouseDown = false;
+  stage.addEventListener("mousedown", function (e) {
+    zl_mouseDown = true;
+    zl_startX = e.clientX;                     // 记录起点
+  });
+  window.addEventListener("mouseup", function (e) {
+    if (!zl_mouseDown) return;
+    zl_mouseDown = false;
+    zlSwipe(e.clientX - zl_startX);
+  });
+}
+zlInitCards();
+
+/* ============ 任务三：图片查看器 ============ */
+// 周丽 2026-11-16 GLM-5.3-Flash 功能：zlInitZoom —— 图片查看器：
+// 双指捏合按"相对起点的距离比例"缩放（1~4x，以两指中点为基准）；双击 1x/2x 切换（0.25s 过渡）；
+// scale>1 时单指拖动；每帧钳制在边界内；1x 自动居中
+function zlInitZoom() {
+  var stage = document.getElementById("zl_zoomStage");
+  var img = document.getElementById("zl_zoomImg");
+  var info = document.getElementById("zl_zoomInfo");
+  var zl_scale = 1, zl_tx = 0, zl_ty = 0;                 // 当前状态：translate + scale
+  var zl_pinchStartDist = 0, zl_pinchStartScale = 1, zl_pinchStartTx = 0, zl_pinchStartTy = 0, zl_pinchMid = null;
+  var zl_dragStartX = 0, zl_dragStartY = 0, zl_dragStartTx = 0, zl_dragStartTy = 0;
+  var zl_lastTap = 0, zl_pinch = false;
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlDist —— 两指直线距离（Math.hypot 即勾股定理）
+  function zlDist(t1, t2) { return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY); }
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlMid —— 两指中点（缩放基准点）
+  function zlMid(t1, t2) { return { x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2 }; }
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlClamp —— 位移钳制在边界内；scale<=1 强制居中（1x 拖不出边界）；同步指示器
+  function zlClamp() {
+    if (zl_scale <= 1) { zl_tx = 0; zl_ty = 0; }
+    else {
+      var r = stage.getBoundingClientRect();
+      var w = img.offsetWidth * zl_scale, h = img.offsetHeight * zl_scale;
+      var minX = Math.min(0, r.width - w), minY = Math.min(0, r.height - h);
+      zl_tx = Math.max(minX, Math.min(0, zl_tx));
+      zl_ty = Math.max(minY, Math.min(0, zl_ty));
+    }
+    img.style.transform = "translate(" + zl_tx + "px," + zl_ty + "px) scale(" + zl_scale + ")";
+    info.textContent = "缩放 " + zl_scale.toFixed(2) + "x";
+  }
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlAnimate —— 双击切换时临时加 0.25s 过渡类，之后移除（拖动不带动画）
+  function zlAnimate() {
+    img.classList.add("zl_anim");
+    setTimeout(function () { img.classList.remove("zl_anim"); }, 260);
+  }
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlToggle —— 双击：1x ↔ 2x 切换（中心缩放，tx/ty 归零即居中）
+  function zlToggle() {
+    zlAnimate();
+    if (zl_scale > 1) { zl_scale = 1; zl_tx = 0; zl_ty = 0; }
+    else { zl_scale = 2; }
+    zlClamp();
+  }
+
+  stage.addEventListener("touchstart", function (e) {
+    img.classList.remove("zl_anim");
+    zl_pinch = false;
+    if (e.touches.length >= 2) {
+      // 双指：清场 + 定格起点（起始距离/起始 scale/起始 tx ty/中点）——缩放不跳的第一步
+      zl_pinch = true;
+      zl_pinchStartDist = zlDist(e.touches[0], e.touches[1]);
+      zl_pinchStartScale = zl_scale;
+      zl_pinchStartTx = zl_tx; zl_pinchStartTy = zl_ty;
+      zl_pinchMid = zlMid(e.touches[0], e.touches[1]);
+      var rect = stage.getBoundingClientRect();
+      zl_pinchMid.x -= rect.left; zl_pinchMid.y -= rect.top;   // 转成容器内坐标，与 transform 同一坐标系
+    } else {
+      // 单指：记拖动起点；两次落指间隔 < 300ms 判定为双击
+      var now = Date.now();
+      if (now - zl_lastTap < 300) { zlToggle(); zl_lastTap = 0; }
+      else { zl_lastTap = now; }
+      zl_dragStartX = e.touches[0].clientX;
+      zl_dragStartY = e.touches[0].clientY;
+      zl_dragStartTx = zl_tx; zl_dragStartTy = zl_ty;
+    }
+  }, { passive: true });
+
+  stage.addEventListener("touchmove", function (e) {
+    e.preventDefault();                        // 阻止浏览器整页缩放/滚动（必须 passive:false）
+    if (e.touches.length >= 2) {
+      // 双指：本帧距离 ÷ 起始距离 = 本轮缩放倍数（相对起点，不累乘，误差不累积），钳在 1~4
+      var d = zlDist(e.touches[0], e.touches[1]);
+      var s = Math.max(1, Math.min(4, zl_pinchStartScale * d / zl_pinchStartDist));
+      // 缩放基准公式：让中点 mx,my 下的图像像素保持不动
+      zl_tx = zl_pinchMid.x - (zl_pinchMid.x - zl_pinchStartTx) * (s / zl_pinchStartScale);
+      zl_ty = zl_pinchMid.y - (zl_pinchMid.y - zl_pinchStartTy) * (s / zl_pinchStartScale);
+      zl_scale = s;
+      zlClamp();
+    } else if (zl_scale > 1 && !zl_pinch) {
+      // 单指拖动（只在放大后允许）
+      zl_tx = zl_dragStartTx + (e.touches[0].clientX - zl_dragStartX);
+      zl_ty = zl_dragStartTy + (e.touches[0].clientY - zl_dragStartY);
+      zlClamp();
+    }
+  }, { passive: false });
+
+  stage.addEventListener("touchend", function (e) {
+    if (e.touches.length === 0) { zl_pinch = false; zlClamp(); }  // 全部抬手：收尾钳制
+  }, { passive: true });
+
+  stage.addEventListener("touchcancel", function () {
+    zl_pinch = false; zlClamp();               // 被系统打断也要收尾，防止状态卡住
+  }, { passive: true });
+
+  // 电脑端降级：双击可预览缩放切换效果
+  stage.addEventListener("dblclick", function () { zlToggle(); });
+
+  // 无触摸环境提示降级
+  if (!("ontouchstart" in window)) {
+    document.getElementById("zl_zoomTip").innerHTML =
+      "⚠️ 当前环境检测不到触摸，双指捏合请用手机/设备模式打开；电脑上可以<b>双击</b>预览 1x ↔ 2x 切换。";
+  }
+}
+zlInitZoom();
+
+/* ============ 任务四：摇一摇彩蛋 ============ */
+// 周丽 2026-11-16 GLM-5.3-Flash 功能：zlInitShake —— 摇一摇：devicemotion 取 accelerationIncludingGravity
+// 算合成加速度，>18 且冷却 1.5s 判定摇动；无传感器 2s 后降级"点我抽一次"；iOS 13+ 提供授权按钮
+function zlInitShake() {
+  var result = document.getElementById("zl_shakeResult");
+  var text = document.getElementById("zl_shakeText");
+  var log = document.getElementById("zl_motionLog");
+  var permBtn = document.getElementById("zl_permBtn");
+  var fallbackBtn = document.getElementById("zl_fallbackBtn");
+  var DISHES = ["宫保鸡丁", "佛跳墙", "东坡肉", "麻婆豆腐", "糖醋排骨", "水煮鱼", "回锅肉", "白切鸡"];
+  var zl_lastShake = 0, zl_gotMotion = false, zl_shakeCount = 0, zl_maxMag = 0;
+
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlDrawDish —— 随机抽一道菜并播放弹出动画
+  function zlDrawDish() {
+    text.textContent = "今日菜谱：" + DISHES[Math.floor(Math.random() * DISHES.length)];
+    result.classList.remove("zl_pop");
+    void result.offsetWidth;                   // 强制回流，让动画可重复播放
+    result.classList.add("zl_pop");
+  }
+
+  // iOS 13+ 必须用户点击申请权限（页面需 HTTPS）
+  if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
+    permBtn.style.display = "";
+    permBtn.addEventListener("click", function () {
+      DeviceMotionEvent.requestPermission().then(function (state) {
+        text.textContent = state === "granted" ? "授权成功，摇一摇手机试试！" : "授权被拒绝，请点下方降级按钮。";
+      }).catch(function () { text.textContent = "授权失败，请用降级按钮。"; });
+    });
+  }
+
+  fallbackBtn.addEventListener("click", zlDrawDish);  // 降级按钮：无传感器/无权限时的兜底
+
+  window.addEventListener("devicemotion", function (e) {
+    zl_gotMotion = true;
+    var a = e.accelerationIncludingGravity;    // 含重力的加速度：静止 ≈9.8，摇动时剧烈波动
+    if (!a) return;
+    var mag = Math.hypot(a.x || 0, a.y || 0, a.z || 0);
+    if (mag > zl_maxMag) zl_maxMag = mag;      // 记录历史最大加速度：区分"真传感器（含重力≈9.8+）"与"空事件（全 0）"
+    var now = Date.now();
+    log.textContent = "合成加速度：" + mag.toFixed(1) + "（阈值 18）　摇动次数：" + zl_shakeCount;
+    if (mag > 18 && now - zl_lastShake > 1500) {   // 阈值 18 + 冷却 1.5s：一次摇动只触发一次
+      zl_lastShake = now;
+      zl_shakeCount++;
+      zlDrawDish();
+    }
+  });
+
+  // 2 秒判定降级：没收到任何 devicemotion（无传感器），或事件一直在发但加速度恒为 0
+  // （桌面 Chrome 会发"空事件"）——都视为无传感器，显示降级按钮，不报错不白屏
+  setTimeout(function () {
+    if (!zl_gotMotion || zl_maxMag < 1) {
+      text.textContent = "当前设备不支持动作传感器，请用手机打开，或点下方按钮抽一次。";
+      fallbackBtn.style.display = "";
+    }
+  }, 2000);
+}
+zlInitShake();
+</script>
+</body>
+</html>
