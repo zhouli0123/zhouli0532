@@ -77,6 +77,15 @@
   .zl_shakeResult h3{font-size:26px;letter-spacing:2px}
   .zl_shakeResult.zl_pop{animation:zl_pop .45s ease}
   @keyframes zl_pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+  /* 周丽 2026-11-16 GLM-5.3-Flash 功能：zl_roll 抽中转盘动画 —— 结果卡旋转一圈带回弹，摇一摇/点击都触发 */
+  .zl_shakeResult.zl_roll{animation:zl_roll .8s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes zl_roll{
+    0%{transform:rotate(0) scale(.6);opacity:0}
+    35%{transform:rotate(200deg) scale(1.1);opacity:1}
+    60%{transform:rotate(330deg) scale(.97)}
+    80%{transform:rotate(360deg) scale(1.06)}
+    100%{transform:rotate(360deg) scale(1)}
+  }
   .zl_shakeBtns{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
   .zl_shakeBtns button{border:none;font:inherit;font-size:13.5px;font-weight:bold;background:#fff;color:#7c2d92;border-radius:999px;padding:9px 20px;cursor:pointer}
   .zl_shakeBtns button:active{transform:scale(.96)}
@@ -159,7 +168,7 @@
       </div>
       <div class="zl_motionLog" id="zl_motionLog"></div>
     </div>
-    <div class="zl_note"><b>为什么必须做降级</b>：devicemotion 是设备能力事件，电脑浏览器/模拟器没有传感器、事件永远不来，不做降级页面就一片死寂；iOS 13+ 还要求用户主动授权（HTTPS）。所以要有授权按钮入口 + 点击抽签兜底，传感器功能必须真机测试 + 降级两手抓。原理：<code>accelerationIncludingGravity</code> 含重力（静止平放 ≈9.8），<code>acceleration</code> 不含重力（静止时≈0）——摇动检测必须用含重力的那个，摇动时数值剧烈波动，超过阈值 14 判定（阈值定得贴近静止值 9.8 一点，轻摇也能触发；冷却 1.5 秒防一次摇动触发十几次）。</div>
+    <div class="zl_note"><b>为什么必须做降级</b>：devicemotion 是设备能力事件，电脑浏览器/模拟器没有传感器、事件永远不来，不做降级页面就一片死寂；iOS 13+ 还要求用户主动授权（HTTPS）。所以要有授权按钮入口 + 点击抽签兜底，传感器功能必须真机测试 + 降级两手抓。原理：<code>accelerationIncludingGravity</code> 含重力（静止平放 ≈9.8），<code>acceleration</code> 不含重力（静止时≈0）——摇动检测必须用含重力的那个，摇动时数值剧烈波动，超过阈值 18 判定，冷却 1.5 秒防一次摇动触发十几次。</div>
   </div>
 
   <div class="zl_back"><a href="index.html">返回首页</a></div>
@@ -454,12 +463,12 @@ function zlInitShake() {
   var DISHES = ["宫保鸡丁", "佛跳墙", "东坡肉", "麻婆豆腐", "糖醋排骨", "水煮鱼", "回锅肉", "白切鸡"];
   var zl_lastShake = 0, zl_gotMotion = false, zl_shakeCount = 0, zl_maxMag = 0;
 
-  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlDrawDish —— 随机抽一道菜并播放弹出动画
+  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlDrawDish —— 随机抽一道菜并播放"旋转一圈+回弹"转盘动画
   function zlDrawDish() {
     text.textContent = "今日菜谱：" + DISHES[Math.floor(Math.random() * DISHES.length)];
-    result.classList.remove("zl_pop");
+    result.classList.remove("zl_roll");
     void result.offsetWidth;                   // 强制回流，让动画可重复播放
-    result.classList.add("zl_pop");
+    result.classList.add("zl_roll");
   }
 
   // iOS 13+ 必须用户点击申请权限（页面需 HTTPS）
@@ -476,13 +485,13 @@ function zlInitShake() {
 
   window.addEventListener("devicemotion", function (e) {
     zl_gotMotion = true;
-    var a = e.accelerationIncludingGravity || e.acceleration;  // 含重力优先；个别设备只给不含重力的字段
+    var a = e.accelerationIncludingGravity;    // 含重力的加速度：静止 ≈9.8，摇动时剧烈波动
     if (!a) return;
     var mag = Math.hypot(a.x || 0, a.y || 0, a.z || 0);
-    if (mag > zl_maxMag) zl_maxMag = mag;      // 记录历史最大加速度：区分"真传感器"与"空事件"，也方便现场调阈值
+    if (mag > zl_maxMag) zl_maxMag = mag;      // 记录历史最大加速度：区分"真传感器（含重力≈9.8+）"与"空事件（全 0）"
     var now = Date.now();
-    log.textContent = "当前 " + mag.toFixed(1) + " ｜ 最大 " + zl_maxMag.toFixed(1) + "（阈值 14）　摇动次数：" + zl_shakeCount;
-    if (mag > 14 && now - zl_lastShake > 1500) {   // 阈值 14（静止≈9.8，轻摇就能超过）+ 冷却 1.5s：一次摇动只触发一次
+    log.textContent = "当前 " + mag.toFixed(1) + " ｜ 最大 " + zl_maxMag.toFixed(1) + "（阈值 18）　摇动次数：" + zl_shakeCount;
+    if (mag > 18 && now - zl_lastShake > 1500) {   // 阈值 18 + 冷却 1.5s：一次摇动只触发一次
       zl_lastShake = now;
       zl_shakeCount++;
       zlDrawDish();
