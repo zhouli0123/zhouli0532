@@ -113,6 +113,9 @@
   .zl_note{background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:12px;padding:12px 16px;margin-top:14px;font-size:13px;color:#7c5e10}
   .zl_note b{color:#b45309}
 
+  /* 周丽 2026-11-17 GLM-5.3-Flash 功能：zl_demoVideo —— 任务真机演示视频：圆角卡片式播放器，风格与任务卡统一 */
+  .zl_demoVideo{display:block;width:100%;border-radius:14px;margin-top:14px;background:#0b1120;box-shadow:0 8px 20px rgba(31,41,55,.18)}
+
   .zl_back{text-align:center;margin-top:28px}
   .zl_back a{display:inline-block;text-decoration:none;color:#312e81;font-size:14.5px;font-weight:bold;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:11px 30px;box-shadow:0 4px 14px rgba(49,46,129,.12);transition:transform .2s,box-shadow .2s}
   .zl_back a:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(49,46,129,.18)}
@@ -174,6 +177,8 @@
     </div>
     <p id="zl_zoomTip">双指捏合 1x～4x 缩放（以两指中点为基准）、双击 1x/2x 切换（0.25s 过渡）、放大后单指拖动看细节、松手钳在边界内、缩回 1x 自动居中。⚠️ 双指缩放请用手机打开。</p>
     <div class="zl_note"><b>缩放不跳的秘密（答辩）</b>：① 基准用两指中点，公式 <code>tx' = mx − (mx − tx) × (s'/s)</code> 让中点下的像素保持不动；② touchstart 清场定格起点（起始距离/起始 scale/起始 tx ty），touchmove 只算相对起点的比例、不逐帧累乘，误差不累积；③ 两指坐标同用 clientX/clientY，坐标系不混用。</div>
+    <!-- 周丽 2026-11-17 GLM-5.3-Flash 功能：任务三真机演示视频 —— 手机实拍双指缩放/旋转/拖动，对应 video.mp4 -->
+    <video class="zl_demoVideo" src="video.mp4" controls playsinline preload="metadata"></video>
   </div>
 
   <!-- 任务四 · 摇一摇彩蛋 -->
@@ -189,6 +194,8 @@
       <div class="zl_motionLog" id="zl_motionLog"></div>
     </div>
     <div class="zl_note"><b>为什么必须做降级</b>：devicemotion 是设备能力事件，电脑浏览器/模拟器没有传感器、事件永远不来，不做降级页面就一片死寂；iOS 13+ 还要求用户主动授权（HTTPS）。所以要有授权按钮入口 + 点击抽签兜底，传感器功能必须真机测试 + 降级两手抓。原理：<code>accelerationIncludingGravity</code> 含重力（静止平放 ≈9.8），<code>acceleration</code> 不含重力（静止时≈0）——摇动检测必须用含重力的那个，摇动时数值剧烈波动，超过阈值 18 判定，冷却 1.5 秒防一次摇动触发十几次。反馈分两层：卡片会跟随 x 轴加速度左右摆动（±8° 内），用力快摇让"最大"值冲过 18 才抽菜转圈——轻摇只有摆动反馈，这正好演示了"阈值判定"的存在。</div>
+    <!-- 周丽 2026-11-17 GLM-5.3-Flash 功能：任务四真机演示视频 —— 手机实拍摇一摇抽菜谱（摆动反馈+转盘动画），对应 video(1).mp4 -->
+    <video class="zl_demoVideo" src="video(1).mp4" controls playsinline preload="metadata"></video>
   </div>
 
   <div class="zl_back"><a href="index.html">返回首页</a></div>
