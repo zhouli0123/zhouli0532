@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<!-- 周丽 2026-11-12 GLM-5.3-Flash 功能：古诗上图下文页面 —— 通过本地数据服务器（db/server.js，端口 3004）获取 db/db.json 中 poems 的图片（pic）、title、content、author，动态渲染上图下文卡片列表。
+课堂任务"三档进阶"：任务一 fetch 全链路 + 断网 catch 提示；任务二 Promise.all 并发请求 /db/db.json 与 /api/authors 两接口；任务三 搜索框过滤 + 按标题长度排序。
+使用前先在 db 文件夹执行 node server.js 启动服务器（端口 3004） -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>古诗上图下文 · 数据服务器版 · 周丽</title>
+<style>
+  /* 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouli_reset —— 全局基础样式 */
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:#f6f8fc;color:#1f2937;line-height:2}
+
+  /* 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouli_wrap —— 页面主体容器 */
+  .zhouli_wrap{max-width:1060px;margin:0 auto;padding:36px 20px 60px}
+
+  /* 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouli_head —— 顶部标题横幅 */
+  .zhouli_head{background:linear-gradient(135deg,#1d5bbf,#2d7872);border-radius:18px;padding:30px 34px;color:#fff;margin-bottom:20px;box-shadow:0 10px 26px rgba(29,91,191,.25)}
+  .zhouli_head .zhouli_badge{display:inline-block;padding:5px 14px;border-radius:999px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);font-size:13px;letter-spacing:2px;margin-bottom:10px}
+  .zhouli_head h1{font-size:26px;letter-spacing:1px}
+  .zhouli_head p{margin-top:8px;font-size:14px;color:#d9e9f5}
+  .zhouli_head code{background:rgba(255,255,255,.16);padding:1px 8px;border-radius:5px;font-family:Consolas,monospace}
+
+  /* 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouli_toolbar —— 任务三的交互工具条：搜索框 + 排序按钮 */
+  .zhouli_toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:14px}
+  .zhouli_toolbar input{flex:1;min-width:220px;font:inherit;font-size:14.5px;padding:10px 16px;border:1.5px solid #c7d8f8;border-radius:999px;background:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
+  .zhouli_toolbar input:focus{border-color:#1d5bbf;box-shadow:0 0 0 3px rgba(29,91,191,.12)}
+  .zhouli_toolbar button{font:inherit;font-size:14px;font-weight:bold;color:#1d5bbf;background:#fff;border:1.5px solid #c7d8f8;border-radius:999px;padding:10px 20px;cursor:pointer;transition:all .2s}
+  .zhouli_toolbar button:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(29,91,191,.16)}
+  .zhouli_toolbar button.zhouli_on{background:linear-gradient(135deg,#1d5bbf,#2d7872);color:#fff;border-color:transparent}
+
+  /* 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouli_authors —— 作者列表条（来自 /api/authors 接口） */
+  .zhouli_authors{font-size:13.5px;color:#475569;background:#f8faff;border:1px solid #dbe4ff;border-radius:10px;padding:8px 16px;margin-bottom:18px}
+  .zhouli_authors b{color:#0f2b5b}
+
+  /* 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouli_status —— 数据加载状态提示条（加载中 / 出错时显示） */
+  .zhouli_status{background:#fffbea;border:1px solid #fde68a;border-radius:10px;padding:12px 18px;font-size:14px;color:#7c5e10;margin-bottom:20px}
+  .zhouli_status code{background:#fef3c7;color:#92400e;padding:1px 7px;border-radius:5px;font-family:Consolas,monospace}
+
+  /* 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouli_grid —— 上图下文卡片的网格布局 */
+  .zhouli_grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+
+  /* 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouli_card —— 单张卡片：上图（pic）下文（title + author + content） */
+  .zhouli_card{background:#fff;border:1px solid #e8ecf5;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(31,41,55,.08);transition:transform .2s,box-shadow .2s}
+  .zhouli_card:hover{transform:translateY(-4px);box-shadow:0 12px 26px rgba(29,91,191,.16)}
+  .zhouli_card .zhouli_pic{width:100%;height:200px;object-fit:cover;display:block;background:#eef2ff}
+  .zhouli_card .zhouli_body{padding:14px 18px 18px}
+  .zhouli_card h3{font-size:18px;color:#0f2b5b;letter-spacing:1px}
+  .zhouli_card .zhouli_author{display:inline-block;margin-top:4px;font-size:12.5px;color:#2d7872;background:#e6f4f2;border:1px solid #bfe3de;border-radius:999px;padding:1px 10px}
+  .zhouli_card p{margin-top:6px;font-size:14px;color:#374151}
+
+  /* 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouli_qa —— 页面底部答辩要点区（任务三现场答辩备忘） */
+  .zhouli_qa{background:#fffbea;border:1px solid #fde68a;border-radius:12px;padding:14px 20px;margin-top:26px;font-size:13.5px;color:#7c5e10}
+  .zhouli_qa b{color:#b45309}
+  .zhouli_qa code{background:#fef3c7;color:#92400e;padding:1px 7px;border-radius:5px;font-family:Consolas,monospace}
+
+  /* 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouli_back —— 底部返回首页链接 */
+  .zhouli_back{text-align:center;margin-top:24px}
+  .zhouli_back a{display:inline-block;text-decoration:none;color:#0f2b5b;font-size:14.5px;font-weight:bold;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:10px 26px;transition:transform .2s,box-shadow .2s}
+  .zhouli_back a:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(15,43,91,.15)}
+
+  footer{text-align:center;margin-top:30px;color:#9ca3af;font-size:13px}
+</style>
+</head>
+<body>
+<div class="zhouli_wrap">
+
+  <div class="zhouli_head">
+    <span class="zhouli_badge">图 上 文 下 · 数 据 服 务 器 版</span>
+    <h1>古诗卡片 · 上图下文</h1>
+    <p>数据来源：<code>db/db.json</code> 的 <code>poems</code>（pic 图片 + title 标题 + content 内容 + author 作者），
+    由本地数据服务器提供（<code>db/server.js</code>，端口 <code>3004</code>）。</p>
+  </div>
+
+  <!-- 任务三：搜索框（过滤标题/内容）+ 按标题长度排序按钮 -->
+  <div class="zhouli_toolbar">
+    <input type="text" id="zhouliSearch" placeholder="🔍 输入关键字，只显示标题或内容匹配的诗词（本页过滤，不重新请求）">
+    <button type="button" id="zhouliSortBtn">按标题长度排序 ↑</button>
+  </div>
+
+  <!-- 任务二：作者列表（/api/authors 接口返回，Promise.all 与诗词数据并发取回） -->
+  <div class="zhouli_authors" id="zhouliAuthors">作者列表加载中……</div>
+
+  <!-- 加载状态提示：成功拿到数据后隐藏 -->
+  <div class="zhouli_status" id="zhouliStatus">正在从数据服务器加载数据……</div>
+
+  <!-- 卡片容器：JS 动态填充上图下文卡片 -->
+  <div class="zhouli_grid" id="zhouliPoems"></div>
+
+  <!-- 任务三现场答辩备忘 -->
+  <div class="zhouli_qa">
+    <b>答辩备忘 · fetch 为什么写两个 .then？</b>第一个 .then 拿到的是 <code>Response</code> 对象（只有响应头和状态码，body 是还没读的流），调用 <code>res.json()</code> 才把流读完并解析成 JS 对象，所以需要第二个 .then 拿真正的数据。<br>
+    <b>CORS 是谁拦的？</b>是浏览器的同源策略拦的（服务器其实已经返回了数据）。本项目的 server.js 给每个响应都加了 <code>Access-Control-Allow-Origin: *</code>，所以浏览器放行。<br>
+    <b>服务器没启动时页面表现？</b>fetch 进入 catch 分支，黄色提示条显示失败原因和"启动服务器"指引，页面主体不白屏。
+  </div>
+
+  <div class="zhouli_back"><a href="index.html">返回首页</a></div>
+
+  <footer>古诗上图下文 · 周丽 · 高级网页设计 · 2026-2027-1</footer>
+</div>
+
+<script>
+  // 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouliPoemsData / zhouliSortAsc —— 缓存 fetch 到的诗词数据与当前排序方向（升序/降序切换用）
+  var zhouliPoemsData = [];
+  var zhouliSortAsc = true;
+
+  // 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouliRender —— 根据"搜索关键字 + 排序方向"把数据渲染成上图下文卡片
+  function zhouliRender() {
+    var kw = document.getElementById("zhouliSearch").value.trim().toLowerCase();
+    var list = zhouliPoemsData.filter(function (p) {
+      // 搜索：标题或内容任意一个包含关键字即保留（空关键字 = 全部显示）
+      if (!kw) return true;
+      return (p.title || "").toLowerCase().indexOf(kw) > -1
+          || (p.content || "").toLowerCase().indexOf(kw) > -1;
+    });
+    // 排序：按标题长度（升序或降序），不改变原数组
+    list = list.slice().sort(function (a, b) {
+      var d = (a.title || "").length - (b.title || "").length;
+      return zhouliSortAsc ? d : -d;
+    });
+
+    var html = "";
+    for (var i = 0; i < list.length; i++) {
+      var p = list[i];
+      html += '<figure class="zhouli_card">'
+            +   '<img class="zhouli_pic" src="' + p.pic + '" alt="' + p.title + '">'
+            +   '<figcaption class="zhouli_body">'
+            +     '<h3>' + p.title + '</h3>'
+            +     '<span class="zhouli_author">' + (p.author || "佚名") + '</span>'
+            +     '<p>' + p.content + '</p>'
+            +   '</figcaption>'
+            + '</figure>';
+    }
+    document.getElementById("zhouliPoems").innerHTML =
+      html || '<div class="zhouli_status">没有匹配“' + kw + '”的诗词，换个关键字试试。</div>';
+  }
+
+  // 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouliLoadAll —— 任务二：用 Promise.all 并发请求两个接口
+  // （/db/db.json 拿诗词数据 + /api/authors 拿作者列表），两份都到齐后一起渲染；任一失败走 catch 提示启动服务器
+  function zhouliLoadAll() {
+    var status = document.getElementById("zhouliStatus");
+
+    Promise.all([
+      fetch("http://localhost:3004/db/db.json").then(function (res) { return res.json(); }),
+      fetch("http://localhost:3004/api/authors").then(function (res) { return res.json(); })
+    ])
+      .then(function (results) {
+        var data = results[0];   // /db/db.json → { poems: [...] }
+        var authors = results[1]; // /api/authors → { authors: [...] }
+
+        zhouliPoemsData = data.poems;
+        zhouliRender();
+
+        var chips = "";
+        for (var i = 0; i < authors.authors.length; i++) {
+          chips += "<b>" + authors.authors[i] + "</b>" + (i < authors.authors.length - 1 ? "、" : "");
+        }
+        document.getElementById("zhouliAuthors").innerHTML =
+          "作者列表（来自 /api/authors 接口，共 " + authors.authors.length + " 位）：" + chips;
+
+        status.style.display = "none"; // 两份数据都到齐，隐藏提示条
+      })
+      .catch(function (err) {
+        status.innerHTML = "数据加载失败（" + err.message + "）。请先启动数据服务器："
+                         + "在 <code>db</code> 文件夹里执行 <code>node server.js</code>（端口 3004），然后刷新本页。";
+      });
+  }
+
+  // 周丽 2026-11-12 GLM-5.3-Flash 功能：zhouliBindEvents —— 给搜索框和排序按钮绑定交互事件
+  function zhouliBindEvents() {
+    // 搜索：每输入一个字符就重新渲染（数据已在本地缓存，不重新 fetch）
+    document.getElementById("zhouliSearch").addEventListener("input", zhouliRender);
+    // 排序按钮：点击在"标题长度升序/降序"之间切换，按钮文字同步更新
+    document.getElementById("zhouliSortBtn").addEventListener("click", function () {
+      zhouliSortAsc = !zhouliSortAsc;
+      this.textContent = zhouliSortAsc ? "按标题长度排序 ↑" : "按标题长度排序 ↓";
+      this.classList.toggle("zhouli_on", !zhouliSortAsc);
+      zhouliRender();
+    });
+  }
+
+  zhouliBindEvents();
+  zhouliLoadAll();
+</script>
+</body>
+</html>
