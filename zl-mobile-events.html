@@ -16,64 +16,82 @@
 <style>
   /* ② 必备三件套之二：全局去掉点击灰块 */
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:#f6f8fc;color:#1f2937;line-height:1.9}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:#1f2937;line-height:1.9;
+    background:
+      radial-gradient(circle at 88% -4%, rgba(124,58,237,.10) 0 150px, transparent 151px),
+      radial-gradient(circle at -6% 42%, rgba(14,165,164,.10) 0 130px, transparent 131px),
+      linear-gradient(180deg,#f4f6fc,#eef1f8);
+    background-attachment:fixed;
+  }
 
-  .zl_wrap{max-width:600px;margin:0 auto;padding:24px 16px 60px}
-  .zl_head{background:linear-gradient(135deg,#0f172a,#312e81);border-radius:18px;padding:26px 22px;color:#fff;margin-bottom:16px;box-shadow:0 10px 26px rgba(15,23,42,.3)}
-  .zl_head h1{font-size:23px;letter-spacing:1px}
+  .zl_wrap{max-width:620px;margin:0 auto;padding:26px 16px 60px}
+
+  /* 页头：靛蓝→紫渐变横幅 + 玻璃拟态信息条 */
+  .zl_head{position:relative;overflow:hidden;background:linear-gradient(135deg,#1e1b4b,#4338ca 55%,#7c3aed);border-radius:22px;padding:30px 24px;color:#fff;margin-bottom:18px;box-shadow:0 16px 34px rgba(49,46,129,.35)}
+  .zl_head::before{content:"";position:absolute;right:-46px;top:-46px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.10)}
+  .zl_head::after{content:"";position:absolute;right:24px;bottom:-58px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.07)}
+  .zl_head h1{font-size:23px;letter-spacing:1px;line-height:1.5;position:relative}
   .zl_head h1 b{color:#ffd166}
-  .zl_head .zl_meta{display:inline-block;margin-top:12px;font-size:13.5px;color:#e2e8f0;background:rgba(255,255,255,.1);border-radius:8px;padding:6px 12px}
+  .zl_head .zl_meta{display:inline-block;position:relative;margin-top:14px;font-size:13px;color:#e0e7ff;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 16px;backdrop-filter:blur(4px)}
 
-  .zl_sec{background:#fff;border-radius:16px;padding:22px 20px;margin-bottom:18px;border:1px solid #e8ecf5;box-shadow:0 4px 14px rgba(31,41,55,.06)}
-  .zl_sec h2{font-size:18px;color:#111827;padding-bottom:8px;border-bottom:2px solid #e8f0ff;margin-bottom:12px}
+  /* 任务章节：白卡 + 左侧渐变描边 */
+  .zl_sec{position:relative;background:#fff;border-radius:20px;padding:24px 22px;margin-bottom:20px;border:1px solid #e6eaf5;box-shadow:0 6px 20px rgba(31,41,55,.07);overflow:hidden}
+  .zl_sec::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,#4338ca,#7c3aed)}
+  .zl_sec h2{font-size:18px;color:#111827;padding-bottom:10px;margin-bottom:12px;border-bottom:2px solid transparent;border-image:linear-gradient(90deg,#c7d2fe,transparent) 1}
   .zl_sec h2 .zl_star{color:#e8890c;font-size:14px}
-  .zl_sec p{font-size:13.5px;color:#374151;margin-top:8px}
-  .zl_sec b{color:#0f172a}
-  .zl_sec code{background:#eef2ff;color:#1d4ed8;padding:1px 6px;border-radius:4px;font-family:Consolas,monospace;font-size:12.5px}
+  .zl_sec p{font-size:13.5px;color:#374151;margin-top:10px}
+  .zl_sec b{color:#1e1b4b}
+  .zl_sec code{background:#eef2ff;color:#4338ca;padding:1px 7px;border-radius:5px;font-family:Consolas,monospace;font-size:12.5px}
 
   /* ③ 必备三件套之三：只加在"要接管手势的容器"上，不加在 body */
   .zl_pad{
-    border-radius:14px;color:#94a3b8;font-size:13px;
+    border-radius:16px;color:#94a3b8;font-size:13px;
     touch-action:none;              /* 这一块的手势归我，浏览器别滚 */
     user-select:none;               /* 长按不选中文字 */
     -webkit-touch-callout:none;     /* iOS 长按不弹系统菜单 */
   }
 
   /* 任务一：事件探针 */
-  .zl_probePad{position:relative;height:220px;background:#0b1120;overflow:hidden;cursor:crosshair}
+  .zl_probePad{position:relative;height:220px;background:radial-gradient(circle at 50% 42%,#16213e,#0b1120);overflow:hidden;cursor:crosshair;box-shadow:inset 0 0 0 1px rgba(125,211,252,.18)}
   .zl_probePad canvas{position:absolute;left:0;top:0;width:100%;height:100%}
-  .zl_probeMsg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;transition:opacity .3s}
+  .zl_probeMsg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;transition:opacity .3s;color:#7dd3fc;font-size:12.5px;text-align:center;padding:0 26px}
   .zl_probeMsg.zl_hide{opacity:0}
-  .zl_log{background:#0f172a;color:#a5f3a5;border-radius:10px;padding:10px 14px;font-family:Consolas,monospace;font-size:12px;max-height:180px;overflow-y:auto;margin-top:10px;white-space:pre-wrap}
-  .zl_btn{display:inline-block;border:none;font:inherit;font-size:13px;font-weight:bold;color:#0f172a;background:#e2e8f0;border-radius:999px;padding:7px 18px;margin-top:10px;cursor:pointer}
-  .zl_btn:active{background:#ffd166;transform:scale(.97)}
+  .zl_log{background:#0f172a;color:#a5f3a5;border-radius:12px;padding:10px 14px;font-family:Consolas,monospace;font-size:12px;max-height:180px;overflow-y:auto;margin-top:12px;white-space:pre-wrap;box-shadow:inset 0 0 0 1px rgba(165,243,165,.15)}
+  .zl_btn{display:inline-block;border:none;font:inherit;font-size:13px;font-weight:bold;color:#4338ca;background:#eef2ff;border-radius:999px;padding:8px 20px;margin-top:12px;cursor:pointer;box-shadow:0 2px 8px rgba(67,56,202,.15);transition:transform .15s,background .15s}
+  .zl_btn:hover{background:#e0e7ff;transform:translateY(-1px)}
+  .zl_btn:active{background:#ffd166;color:#1e1b4b;transform:scale(.97)}
 
-  .zl_table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
-  .zl_table th,.zl_table td{border:1px solid #dbe4ff;padding:6px 8px;text-align:left;vertical-align:top}
-  .zl_table th{background:#e8f0ff;color:#0f2b5b;white-space:nowrap}
+  .zl_table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;margin:12px 0;border:1px solid #dbe4ff;border-radius:12px;overflow:hidden}
+  .zl_table th,.zl_table td{border-bottom:1px solid #e5ebfa;padding:7px 10px;text-align:left;vertical-align:top}
+  .zl_table tr:last-child td{border-bottom:none}
+  .zl_table th{background:linear-gradient(90deg,#e8f0ff,#f3f6ff);color:#0f2b5b;white-space:nowrap}
   .zl_table td{color:#374151}
+  .zl_table tr:nth-child(even) td{background:#f8faff}
 
   /* 任务二：手势卡片 */
-  .zl_cardStage{position:relative;border-radius:16px;overflow:hidden;touch-action:pan-y} /* 只接管横向，纵向仍可滚动 */
+  .zl_cardStage{position:relative;border-radius:18px;overflow:hidden;touch-action:pan-y;box-shadow:0 10px 24px rgba(31,41,55,.16)} /* 只接管横向，纵向仍可滚动 */
   .zl_track{display:flex;width:400%;transition:transform .3s ease} /* 任务二要求：0.3s 过渡动画 */
-  .zl_slide{width:25%;height:300px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;color:#fff;position:relative}
+  .zl_slide{width:25%;height:300px;display:flex;flex-direction:column;justify-content:flex-end;padding:22px;color:#fff;position:relative}
   .zl_slide .zl_dishImg{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .zl_slide::after{content:"";position:absolute;left:0;right:0;bottom:0;height:62%;background:linear-gradient(transparent,rgba(4,10,26,.72));z-index:0} /* 压暗底部，文字更清楚 */
   .zl_slide h3,.zl_slide p{position:relative;z-index:1}
-  .zl_slide h3{font-size:24px;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.35)}
-  .zl_slide p{font-size:13.5px;opacity:.92;margin-top:4px}
-  .zl_counter{text-align:center;font-size:13.5px;color:#475569;margin-top:10px}
-  .zl_hint{position:absolute;left:50%;top:16px;transform:translateX(-50%) translateY(-8px);background:rgba(15,23,42,.85);color:#ffd166;font-size:13px;border-radius:999px;padding:5px 16px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+  .zl_slide h3{font-size:25px;letter-spacing:3px;text-shadow:0 2px 10px rgba(0,0,0,.4)}
+  .zl_slide p{font-size:13.5px;opacity:.94;margin-top:4px}
+  .zl_counter{text-align:center;font-size:13px;color:#475569;margin-top:12px}
+  .zl_hint{position:absolute;left:50%;top:16px;transform:translateX(-50%) translateY(-8px);background:rgba(15,23,42,.88);color:#ffd166;font-size:13px;border-radius:999px;padding:5px 18px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.25)}
   .zl_hint.zl_show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   /* 任务三：图片查看器 */
-  .zl_zoomStage{position:relative;height:340px;border-radius:16px;overflow:hidden;background:#0b1120}
+  .zl_zoomStage{position:relative;height:340px;border-radius:18px;overflow:hidden;background:radial-gradient(circle at 50% 45%,#1b2440,#0b1120);box-shadow:inset 0 0 0 1px rgba(125,211,252,.16)}
   .zl_zoomImg{width:100%;height:100%;object-fit:contain;display:block;transform-origin:0 0}
   .zl_zoomImg.zl_anim{transition:transform .25s ease} /* 双击切换的 0.25s 过渡 */
-  .zl_zoomInfo{position:absolute;left:10px;bottom:10px;background:rgba(15,23,42,.8);color:#7dd3fc;font-size:12.5px;font-family:Consolas,monospace;border-radius:8px;padding:4px 12px;pointer-events:none}
+  .zl_zoomInfo{position:absolute;left:12px;bottom:12px;background:rgba(15,23,42,.82);color:#7dd3fc;font-size:12.5px;font-family:Consolas,monospace;border-radius:999px;padding:5px 14px;pointer-events:none;backdrop-filter:blur(3px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
 
   /* 任务四：摇一摇 */
-  .zl_shakeBox{border-radius:16px;padding:26px 20px;text-align:center;background:linear-gradient(135deg,#7c2d92,#db2777);color:#fff;transition:transform .08s linear}
-  .zl_shakeResult{min-height:96px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:15px}
+  .zl_shakeBox{position:relative;overflow:hidden;border-radius:18px;padding:28px 20px;text-align:center;background:linear-gradient(135deg,#6d28d9,#db2777);color:#fff;transition:transform .08s linear;box-shadow:0 12px 26px rgba(109,40,217,.32)}
+  .zl_shakeBox::before{content:"";position:absolute;left:-38px;top:-38px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.09)}
+  .zl_shakeResult{min-height:96px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:15px;position:relative}
   .zl_shakeResult h3{font-size:26px;letter-spacing:2px}
   .zl_shakeResult.zl_pop{animation:zl_pop .45s ease}
   @keyframes zl_pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
@@ -86,18 +104,20 @@
     80%{transform:rotate(360deg) scale(1.06)}
     100%{transform:rotate(360deg) scale(1)}
   }
-  .zl_shakeBtns{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-  .zl_shakeBtns button{border:none;font:inherit;font-size:13.5px;font-weight:bold;background:#fff;color:#7c2d92;border-radius:999px;padding:9px 20px;cursor:pointer}
+  .zl_shakeBtns{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;position:relative}
+  .zl_shakeBtns button{border:none;font:inherit;font-size:13.5px;font-weight:bold;background:#fff;color:#6d28d9;border-radius:999px;padding:9px 22px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.22);transition:transform .15s}
+  .zl_shakeBtns button:hover{transform:translateY(-1px)}
   .zl_shakeBtns button:active{transform:scale(.96)}
-  .zl_motionLog{text-align:center;font-size:12px;color:#fbcfe8;margin-top:10px;font-family:Consolas,monospace}
+  .zl_motionLog{text-align:center;font-size:12px;color:#fbcfe8;margin-top:12px;font-family:Consolas,monospace;position:relative}
 
-  .zl_note{background:#fffbea;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px;color:#7c5e10}
+  .zl_note{background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:12px;padding:12px 16px;margin-top:14px;font-size:13px;color:#7c5e10}
   .zl_note b{color:#b45309}
 
-  .zl_back{text-align:center;margin-top:26px}
-  .zl_back a{display:inline-block;text-decoration:none;color:#0f172a;font-size:14.5px;font-weight:bold;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:10px 26px}
+  .zl_back{text-align:center;margin-top:28px}
+  .zl_back a{display:inline-block;text-decoration:none;color:#312e81;font-size:14.5px;font-weight:bold;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:11px 30px;box-shadow:0 4px 14px rgba(49,46,129,.12);transition:transform .2s,box-shadow .2s}
+  .zl_back a:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(49,46,129,.18)}
   .zl_back a:active{background:#ffd166}
-  footer{text-align:center;margin-top:26px;color:#9ca3af;font-size:12.5px}
+  footer{text-align:center;margin-top:28px;color:#9ca3af;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -369,17 +389,27 @@ function zlInitZoom() {
   // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlMid —— 两指中点（缩放基准点）
   function zlMid(t1, t2) { return { x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2 }; }
 
-  // 周丽 2026-11-16 GLM-5.3-Flash 功能：zlClamp —— 位移钳制在边界内；scale<=1 强制居中（1x 拖不出边界）；同步指示器
+  // 周丽 2026-11-17 GLM-5.3-Flash 功能：zlClamp —— 位移钳制在边界内；scale<=1 强制居中（1x 拖不出边界）；
+  // 旋转时按外接矩形自动缩小（rotFit），保证图片转任何角度都完整留在画面内，不会转出框；同步指示器
   function zlClamp() {
+    var fit = 1;
+    if (zl_rot !== 0) {
+      var rad = Math.abs(zl_rot) * Math.PI / 180;
+      var bw = img.offsetWidth * Math.abs(Math.cos(rad)) + img.offsetHeight * Math.abs(Math.sin(rad));
+      var bh = img.offsetWidth * Math.abs(Math.sin(rad)) + img.offsetHeight * Math.abs(Math.cos(rad));
+      fit = Math.min(1, stage.clientWidth / bw, stage.clientHeight / bh);   // 旋转后外接矩形若超出画面就等比缩小
+    }
+    var eff = zl_scale * fit;                  // 实际显示倍数 = 捏合倍数 × 旋转占位缩放
     if (zl_scale <= 1) { zl_tx = 0; zl_ty = 0; }
     else {
       var r = stage.getBoundingClientRect();
-      var w = img.offsetWidth * zl_scale, h = img.offsetHeight * zl_scale;
+      var w = img.offsetWidth * eff, h = img.offsetHeight * eff;
       var minX = Math.min(0, r.width - w), minY = Math.min(0, r.height - h);
       zl_tx = Math.max(minX, Math.min(0, zl_tx));
       zl_ty = Math.max(minY, Math.min(0, zl_ty));
     }
-    img.style.transform = "translate(" + zl_tx + "px," + zl_ty + "px) rotate(" + zl_rot + "deg) scale(" + zl_scale + ")";
+    var cx = img.offsetWidth / 2, cy = img.offsetHeight / 2;   // 绕图片中心旋转（origin 仍是 0 0，用平移补偿）
+    img.style.transform = "translate(" + zl_tx + "px," + zl_ty + "px) translate(" + cx + "px," + cy + "px) rotate(" + zl_rot + "deg) translate(" + (-cx) + "px," + (-cy) + "px) scale(" + eff + ")";
     info.textContent = "缩放 " + zl_scale.toFixed(2) + "x" + (zl_rot !== 0 ? " · 旋转 " + Math.round(zl_rot) + "°" : "");
   }
 
